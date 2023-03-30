@@ -35,7 +35,7 @@ import {onMounted, ref} from 'vue';
 import {useRouter} from "vue-router";
 import {useRoute} from "vue-router/dist/vue-router";
 import {getCurrentUser} from "../service/user";
-import myAxios from "../plugins/myAxios";
+import myAxios from "../plugins/MyAxios.js";
 import {Toast} from "vant";
 import UserTagsList from "../constants/UserTagsList";
 
