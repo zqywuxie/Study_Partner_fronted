@@ -1,0 +1,9 @@
+.add_button{
+    border-radius: 50%;
+    position: fixed;
+    width: 50px;
+    right: 12px;
+    height: 50px;
+    bottom: 60px;
+    z-index: 2;
+}
