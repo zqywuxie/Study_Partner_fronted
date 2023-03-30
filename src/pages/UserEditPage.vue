@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
-import myAxios from "../plugins/MyAxios.ts";
+import myAxios from "../plugins/MyAxios";
 import {Toast} from "vant";
 import {useRouter} from "vue-router";
 import {getCurrentUser} from "../service/user";

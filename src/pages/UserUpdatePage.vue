@@ -33,7 +33,7 @@
 import {useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {getCurrentUser} from "../service/user";
-import myAxios from "../plugins/myAxios";
+import myAxios from "../plugins/MyAxios";
 import {Toast} from "vant";
 
 // const user = {

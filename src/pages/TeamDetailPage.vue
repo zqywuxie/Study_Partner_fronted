@@ -93,7 +93,7 @@
 import {onMounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {Toast} from "vant";
-import myAxios from "../plugins/myAxios";
+import myAxios from "../plugins/MyAxios";
 import {teamStatusEnum} from "../constants/team";
 import teamImgs from "../service/teamImg";
 import moment from "moment";

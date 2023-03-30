@@ -71,7 +71,7 @@
 <script lang="ts" setup>
 import {useRoute, useRouter} from "vue-router";
 import {ref} from 'vue';
-import myAxios from "../plugins/myAxios";
+import myAxios from "../plugins/MyAxios";
 import {Toast} from "vant";
 import friend from '../assets/logo.png';
 
