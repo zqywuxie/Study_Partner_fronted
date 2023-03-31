@@ -43,7 +43,7 @@
                 </template>
             </van-cell>
             <van-divider/>
-            <van-cell center title="退出登录" @click="quit">
+            <van-cell center title="退出登录" @click="quite">
                 <template #icon>
                     <van-icon name="close" size="18"/>
                 </template>

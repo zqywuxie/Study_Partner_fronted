@@ -3,7 +3,7 @@
 import axios from "axios";
 
 const myAxios = axios.create({
-    baseURL: 'http://localhost:8080/api'
+    baseURL: process.env.NODE_ENV === "development" ? 'http://localhost:8080/api' : 'https://springboot-8xuy-37303-4-1317328802.sh.run.tcloudbase.com/api'
     // baseURL: 'http://47.108.194.167:8080/'
 });
 //带上凭证
@@ -21,7 +21,7 @@ myAxios.interceptors.request.use(function (config) {
 // 添加响应拦截器
 myAxios.interceptors.response.use(function (response) {
     // 对响应数据做点什么
-    if (response?.data.code==40002){
+    if (response?.data.code == 40002) {
         const redirectUrl = window.location.href;
         window.location.href = `/user/login?redirect=${redirectUrl}`
     }
