@@ -1,9 +1,8 @@
 {
-  "version": 2,
   "routes": [
     {
-      "src": "/user/login",
-      "dest": "/user/login"
+      "src": "/(.*)",
+      "dest": "/index.html?s=$1"
     }
   ]
 }
