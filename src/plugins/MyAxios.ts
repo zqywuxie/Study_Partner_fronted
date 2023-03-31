@@ -3,7 +3,7 @@
 import axios from "axios";
 
 const myAxios = axios.create({
-    baseURL: process.env.NODE_ENV === "development" ? 'http://localhost:8080/api' : 'https://springboot-8xuy-37303-4-1317328802.sh.run.tcloudbase.com/api'
+    baseURL: process.env.NODE_ENV === "development" ? 'http://localhost:8080/api' : 'https://www.zqywuxie.top/api/'
     // baseURL: 'http://47.108.194.167:8080/'
 });
 //带上凭证
