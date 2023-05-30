@@ -45,6 +45,7 @@
 
     </van-form>
   </van-row>
+  <copyright/>
 </template>
 
 <script setup>
@@ -53,6 +54,7 @@ import myAxios from "../plugins/MyAxios.ts";
 import {Toast} from "vant";
 import {useRouter, useRoute} from "vue-router";
 import friend from "../assets/logo.png"
+import Copyright from "../components/CopyRight.vue";
 const router = useRouter()
 const route = useRoute()
 const userAccount = ref('');

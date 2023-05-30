@@ -3,8 +3,8 @@
 import axios from "axios";
 
 const myAxios = axios.create({
-    baseURL: process.env.NODE_ENV === "development" ? 'http://localhost:8080/api' : 'https://www.zqywuxie.top/api/'
-    // baseURL: 'http://47.108.194.167:8080/'
+    baseURL: process.env.NODE_ENV === "development" ? 'http://localhost:8080/api' : 'https://www.zqyyouxie.ren/api'
+    // baseURL: 'http://47.108.194.167:5490/api'
 });
 //带上凭证
 myAxios.defaults.withCredentials = true
