@@ -1,5 +1,8 @@
 # 志同道合（伙伴匹配系统）
 
+<a target="_blank" href="https://github.com/zqywuxie/Study_Partner_fronted">
+    <img alt="" src="https://github.com/zqywuxie/Study_Partner_fronted/badge/star.svg?theme=gvp"/>
+</a>
 > 为大学生组队、交友等社交场景提供便利匹配的系统
 >
 > 该系统为H5移动端，Java + Vue 全栈项目
