@@ -71,9 +71,9 @@
 <script lang="ts" setup>
 import {useRoute, useRouter} from "vue-router";
 import {ref} from 'vue';
-import myAxios from "../plugins/MyAxios";
+import myAxios from "../../plugins/MyAxios";
 import {Toast} from "vant";
-import friend from '../assets/logo.png';
+import friend from '../../assets/logo.png';
 
 const router = useRouter();
 const route = useRoute();

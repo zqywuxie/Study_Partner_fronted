@@ -1,5 +1,5 @@
 <template>
-    <form action="/">
+    <form action="/public">
         <van-search
                 v-model="searchText"
                 show-action
@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import {ref} from 'vue';
 import {useRouter} from "vue-router";
-import UserTagsList from "../constants/UserTagsList";
+import UserTagsList from "../../constants/UserTagsList";
 
 const router = useRouter();
 

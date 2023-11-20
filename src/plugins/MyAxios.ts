@@ -3,11 +3,14 @@
 import axios from "axios";
 
 const myAxios = axios.create({
-    baseURL: process.env.NODE_ENV === "development" ? 'http://localhost:8080/api' : 'https://www.zqyyouxie.ren/api'
+    // todo 域名
+    baseURL: process.env.NODE_ENV === "development" ? 'http://localhost:8081/api' : 'https://www.zqywuku.top/api'
     // baseURL: 'http://47.108.194.167:5490/api'
 });
 //带上凭证
 myAxios.defaults.withCredentials = true
+
+
 //拦截器
 // 添加请求拦截器
 myAxios.interceptors.request.use(function (config) {

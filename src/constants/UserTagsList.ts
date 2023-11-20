@@ -5,6 +5,7 @@ let UserTagsList;
  */
 export default UserTagsList = [
     {
+
         text: '性别',
         children: [
             {text: '男', id: '男'},

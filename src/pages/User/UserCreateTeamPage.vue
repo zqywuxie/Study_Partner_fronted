@@ -8,8 +8,8 @@
 <script setup>
 import {useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
-import myAxios from "../plugins/MyAxios.ts";
-import TeamCardList from "../components/TeamCardList.vue";
+import myAxios from "../../plugins/MyAxios.ts";
+import TeamCardList from "../../components/TeamCardList.vue";
 import {Toast} from "vant";
 
 const router = useRouter()

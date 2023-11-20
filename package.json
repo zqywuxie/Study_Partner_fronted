@@ -9,11 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vant/compat": "^1",
     "axios": "^1.2.6",
     "compressorjs": "^1.2.1",
     "moment": "^2.29.4",
     "qs": "^6.11.0",
-    "vant": "^3.6.11",
+    "vant": "^3.6.12",
     "vue": "^3.2.45",
     "vue-router": "4"
   },

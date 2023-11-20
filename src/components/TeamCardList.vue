@@ -139,9 +139,14 @@ const doJoinTeam = async () => {
   if (res?.code === 0) {
     Toast.success('加入成功');
     show.value = false
+    refresh();
   } else {
     Toast.fail('加入失败' + (res.description ? `，${res.description}` : ''));
   }
+}
+
+const refresh = () => {
+  location.reload();
 }
 
 
@@ -161,6 +166,7 @@ const doQuitTeam = async (id: number) => {
   });
   if (res?.code === 0) {
     Toast.success('退出成功');
+    refresh();
   } else {
     Toast.fail('退出失败' + (res.description ? `，${res.description}` : ''));
   }
@@ -189,7 +195,10 @@ const doTeamDetail = (id: number) => {
 #teamCardList :deep(.van-image__img) {
   height: 128px;
   object-fit: unset;
+
+
 }
+
 
 .popup {
   width: 350px;

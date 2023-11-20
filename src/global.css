@@ -1,4 +1,4 @@
-.add_button{
+.add_button {
     border-radius: 50%;
     position: fixed;
     width: 50px;
@@ -7,3 +7,34 @@
     bottom: 60px;
     z-index: 2;
 }
+
+
+body {
+    background-color: rgb(205, 233, 255);
+    /*background-image: linear-gradient(180deg, #FFDEE9 0%, #B5FFFC 100%);*/
+
+}
+
+
+:root {
+    --van-cell-group-background-color: ;
+    --van-divider-border-color: ;
+    --van-card-background-color: ;
+    --van-nav-bar-background-color: ;
+    --van-tabbar-background-color: ;
+    --van-search-background-color: ;
+    --van-tabs-nav-background-color: ;
+    --van-cell-background-color: ;
+    --van-cell-border-color: {
+
+    };
+    --van-tabbar-background-color: ;
+    --van-tabbar-item-active-background-color: ;
+    --van-divider-border-color: ;
+    --van-grid-item-content-background-color: ;
+}
+
+.van-hairline--bottom:after {
+    border-bottom-width: 0;
+}
+

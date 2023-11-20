@@ -1,48 +1,49 @@
 <template>
-    <van-skeleton title avatar :row="3" :loading="props.loading" v-for="user in props.userList">
-        <van-card
-                :desc=user.profile
-                :title="`${user.username}(${user.id})`"
-                :thumb="user.avatarUrl"
-        >
-            <template #tags>
-                <van-tag plain type="primary" v-for="tag in user.tags">
-                    {{ tag }}
-                </van-tag>
-            </template>
-            <template #footer>
-                <van-button size="mini" @click="showUserDetail(user)">联系我</van-button>
-            </template>
-        </van-card>
-    </van-skeleton>
+  <van-skeleton title avatar :row="3" :loading="props.loading" v-for="user in props.userList">
+    <van-card
+        :desc=user.profile
+        :title="`${user.username}(${user.id})`"
+        :thumb="user.avatarUrl"
+    >
+      <template #tags>
+        <van-tag plain type="primary" v-for="tag in user.tags">
+          {{ tag }}
+        </van-tag>
+      </template>
+      <template #footer>
+        <van-button size="mini" type="primary" @click="showUserDetail(user.id)">联系我</van-button>
+      </template>
+    </van-card>
+  </van-skeleton>
 
-    <van-popup v-model:show="show">
+  <van-popup v-model:show="show">
 
-        <van-image :src="clickUser.avatarUrl"/>
-        <van-divider/>
-        <van-cell :value="clickUser.city" center title="伙伴城市:"/>
+    <van-image :src="clickUser.avatarUrl"/>
+    <van-divider/>
+    <van-cell :value="clickUser.city" center title="伙伴城市:"/>
 
-        <van-cell :value="clickUser.profile" center title="伙伴简介:"/>
-        <van-cell :value="clickUser.gender == 0?'男':'女'" center title="伙伴性别:"/>
-        <van-cell :value="popupText" center/>
-    </van-popup>
+    <van-cell :value="clickUser.profile" center title="伙伴简介:"/>
+    <van-cell :value="clickUser.gender == 0?'男':'女'" center title="伙伴性别:"/>
+    <van-cell :value="popupText" center/>
+  </van-popup>
 </template>
 
 <script setup lang="ts">
 import {UserType} from "../models/user";
 import {ref} from "vue";
+import {useRouter} from "vue-router";
 
 
 interface UserCardListProps {
-    userList: UserType[];
-    loading: boolean
+  userList: UserType[];
+  loading: boolean
 }
 
 //withDefaults 为变量提供默认初始值
 const props = withDefaults(defineProps<UserCardListProps>(), {
-    //@ts-ignore
-    userList: [] as UserType[],
-    loading: true
+  //@ts-ignore
+  userList: [] as UserType[],
+  loading: true
 })
 
 
@@ -56,14 +57,14 @@ const props = withDefaults(defineProps<UserCardListProps>(), {
 
 const popupText = ref('暂无联系方式');
 const clickUser = ref<UserType>();
-const showUserDetail = (user: UserType) => {
-    clickUser.value = user;
-    if (user.phone) {
-        popupText.value = '联系方式：' + user.phone;
-    } else {
-        popupText.value = '暂无联系方式';
+const router = useRouter();
+const showUserDetail = (id: any) => {
+  router.push({
+    path: "/user/detail",
+    query: {
+      id: id
     }
-    show.value = true;
+  })
 }
 
 const show = ref(false);

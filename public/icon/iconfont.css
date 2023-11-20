@@ -1,0 +1,71 @@
+@font-face {
+  font-family: "my-icon"; /* Project id 4093533 */
+  src: url('iconfont.woff2?t=1688021362381') format('woff2'),
+  url('iconfont.woff?t=1688021362381') format('woff'),
+  url('iconfont.ttf?t=1688021362381') format('truetype');
+}
+
+.my-icon {
+  font-family: "my-icon" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.my-icon-wuguan:before {
+  content: "\ec5f";
+}
+
+.my-icon-guanzhu:before {
+  content: "\e8b1";
+}
+
+.my-icon-wodefensi:before {
+  content: "\e634";
+}
+
+.my-icon-jubao:before {
+  content: "\e661";
+}
+
+.my-icon-lianjie:before {
+  content: "\e601";
+}
+
+.my-icon-tianxie:before {
+  content: "\ec88";
+}
+
+.my-icon-shanchu:before {
+  content: "\e8b6";
+}
+
+.my-icon-qita:before {
+  content: "\e600";
+}
+
+.my-icon-shangchuan:before {
+  content: "\e662";
+}
+
+.my-icon-fankui:before {
+  content: "\e738";
+}
+
+.my-icon-wofadetiezi:before {
+  content: "\e61e";
+}
+
+.my-icon-jiarubanji:before {
+  content: "\e65d";
+}
+
+.my-icon-wochuangjiande:before {
+  content: "\e64d";
+}
+
+.my-icon-aite:before {
+  content: "\e60d";
+}
+

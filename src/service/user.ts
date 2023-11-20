@@ -2,6 +2,7 @@ import myAxios from "../plugins/MyAxios";
 import {getCurrentUserState, setCurrentUserState} from "../state/user";
 
 export const getCurrentUser = async () => {
+    //todo router.back等，缓存没变，除非刷新
     //先从本地进行查找
     const currentUser=getCurrentUserState()
     if (currentUser){

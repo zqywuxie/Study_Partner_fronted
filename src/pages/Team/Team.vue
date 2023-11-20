@@ -15,8 +15,8 @@
 <script setup>
 import {useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
-import myAxios from "../plugins/MyAxios.ts";
-import TeamCardList from "../components/TeamCardList.vue";
+import myAxios from "../../plugins/MyAxios.ts";
+import TeamCardList from "../../components/TeamCardList.vue";
 import {Toast} from "vant";
 
 const router = useRouter()
@@ -27,7 +27,7 @@ const onSearch = (val) => {
   listTeam(val);
 };
 
-const listTeam = async (val = '',status=0) => {
+const listTeam = async (val = '', status = 0) => {
   const res = await myAxios.get("/team/list", {
     params: {
       searchText: val,
@@ -50,15 +50,14 @@ const toAddTeam = () => {
   }))
 }
 
-const onTabChange=(name)=>{
-  if (name=='public'){
-    listTeam(searchText.value,0)
-  }else{
-    listTeam(searchText.value,2)
+const onTabChange = (name) => {
+  if (name == 'public') {
+    listTeam(searchText.value, 0)
+  } else {
+    listTeam(searchText.value, 2)
   }
 }
 </script>
 
 <style scoped>
-
 </style>

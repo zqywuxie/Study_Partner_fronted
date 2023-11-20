@@ -6,7 +6,7 @@
       :thumb="user.avatarUrl"
   >
     <template #tags>
-      <van-tag plain type="primary"  v-for="tag in user.tags">
+      <van-tag plain type="primary" v-for="tag in user.tags">
         {{ tag }}
       </van-tag>
     </template>
@@ -14,12 +14,12 @@
       <van-button size="mini">联系我</van-button>
     </template>
   </van-card>
-  <van-empty  v-if="!userList||userList.length<1"  description="搜索结果为空" />
+  <van-empty v-if="!userList||userList.length<1" description="搜索结果为空"/>
 </template>
 
 <script setup>
 import {useRoute} from "vue-router";
-import myAxios from "../plugins/MyAxios.ts";
+import myAxios from "../../plugins/MyAxios.ts";
 import {onMounted, ref} from "vue";
 import {Toast} from "vant";
 import qs from "qs"
@@ -50,11 +50,11 @@ onMounted(async () => {
     }
   }).then(function (response) {
     console.log("/user/search/tags" + response)
-    Toast("请求成功")
+    Toast.success("请求成功")
     return response?.data
   }).catch(function (error) {
     console.log("/user/search/tags" + error)
-    Toast("请求失败")
+    Toast.fail("请求失败")
   })
   if (userListData) {
     userListData.forEach(user => {
@@ -63,7 +63,7 @@ onMounted(async () => {
       }
     })
   }
-  userList.value=userListData.map(function (item){
+  userList.value = userListData.map(function (item) {
     return item.data
   })
   // useList.value=userListData
