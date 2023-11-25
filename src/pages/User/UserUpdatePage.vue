@@ -2,10 +2,17 @@
   <div id="userUpdatePage">
     <template v-if="user">
       <div>
-        <van-cell icon="photo-o" title="头像" is-link center>
-          <van-uploader v-model="fileList" :max-count="1" :after-read="afterRead" preview-size="60px">
-            <img :src="imgSrc" style="width: 48px;height: 48px;border-radius: 50%" alt=""/>
-          </van-uploader>
+        <van-cell icon="photo-o" title="头像" is-link center @click="handleClick">
+          <van-image
+              round
+              width="3rem"
+              height="3rem"
+              :src="imgSrc"
+          />
+
+          <!--          <van-uploader v-model="fileList" :max-count="1" :after-read="afterRead" preview-size="60px">-->
+          <!--            <img :src="imgSrc" style="width: 48px;height: 48px;border-radius: 50%" alt=""/>-->
+          <!--          </van-uploader>-->
         </van-cell>
         <van-cell icon="user-o" title="用户账号" :value="user.userAccount"/>
         <van-cell icon="contact" title="昵称" is-link :value="user.username"
@@ -18,6 +25,8 @@
         <van-cell icon="award-o" :value="user.profile" center is-link title="个人简介" to="/user/edit"
                   @click="toEdit('profile', '个人简介', user.profile)"/>
         <!--            <van-text-ellipsis :content="user.profile || '还没有填写个性签名'"/>-->
+
+        <!--       todo 更新 /-->
         <van-cell icon="user-circle-o" title="性别" is-link @click="()=>showPicker=true">
           <span v-if="user.gender===1">男</span>
           <span v-if="user.gender===0">女</span>
@@ -43,6 +52,18 @@
               @cancel="()=>showPicker=false"
           />
         </van-popup>
+
+        <van-dialog v-model:show="showDialog" title="更换头像" @confirm="handleConfirm" show-cancel-button>
+          <div class="uploader-container">
+            <van-uploader
+                v-model="fileList"
+                :max-count="1"
+                preview-size="200px"
+            >
+              <img :src="imgSrc" style="width: 100%; height: 100%; border-radius: 50%" alt=""/>
+            </van-uploader>
+          </div>
+        </van-dialog>
       </div>
     </template>
   </div>
@@ -53,14 +74,16 @@ import {useRouter} from "vue-router";
 import {onMounted, ref, watch, watchEffect} from "vue";
 import {getCurrentUser} from "../../service/user";
 import myAxios from "../../plugins/MyAxios";
-import {Toast} from "vant";
+import {Dialog, Toast} from "vant";
 
+const VanDialog = Dialog.Component;
 
 const user = ref();
 const showGenderEdit = ref(false);
 const gender = ref();
 const imgSrc = ref('')
 const showPicker = ref(false);
+const showDialog = ref(false)
 const fileList = ref([]);
 const genders = [
   {text: '男', value: '1'},
@@ -74,32 +97,41 @@ onMounted(async () => {
 })
 
 const router = useRouter();
+const handleClick = () => {
+  showDialog.value = true
+}
 
 
-const afterRead = async () => {
+const handleConfirm = async () => {
   let formData = new FormData();
   formData.append("file", fileList.value[0].file)
+  formData.append("userAccount", user.value.userAccount)
+
+  //todo 更新头像
+  formData.append("type", "update_avatar")
   const res = await myAxios.post("/fileOss/upload", formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
   })
-  if (res?.data.code === 0) {
-    showSuccessToast("更新成功")
-    imgSrc.value = res?.data.data
+  console.log(res)
+  if (res?.code === 0) {
+    Toast.success("更新成功")
+    imgSrc.value = res?.data
   } else {
-    showFailToast("更新失败：" + res.data.message)
+    Toast.fail("更新失败：" + res.message)
   }
   fileList.value = []
 }
-const onConfirmGender = async ({selectedValues}) => {
-  const res = await myAxios.put("/user/update", {
-    gender: selectedValues[0]
+const onConfirmGender = async ({value}) => {
+  const res = await myAxios.post("/user/update", {
+    gender: value,
+    id: user.value.id
   })
-  if (res?.data.code === 0) {
-    showSuccessToast("修改成功")
+  if (res?.code === 0) {
+    Toast.success("修改成功")
   } else {
-    showFailToast("修改失败")
+    Toast.fail("修改失败")
   }
   showPicker.value = false
   await refresh()
@@ -110,7 +142,6 @@ const toEdit = (editKey: string, editName: string, currentValue: string) => {
       currentValue = '';
     }
 
-    // console.log(typeof currentValue)
     router.push({
       path: '/user/editTag',
       query: {

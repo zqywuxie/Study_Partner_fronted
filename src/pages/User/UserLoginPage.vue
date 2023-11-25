@@ -19,6 +19,7 @@
         <van-cell-group inset>
           <van-field
               v-model="userAccount"
+              left-icon="phone-o"
               :rules="[{ required: true, message: '请填写用户名' }]"
               label="账号"
               name="userAccount"
@@ -26,6 +27,7 @@
           />
           <van-field
               v-model="password"
+              left-icon="lock"
               :rules="[{ required: true, message: '请填写密码' }]"
               label="密码"
               name="userPassword"
@@ -43,6 +45,26 @@
         <van-cell title="" to="/user/register" value="还没有账号？注册"></van-cell>
 
       </van-form>
+      <div class="ways" style="margin-top: -5px">
+        <span>其他登录方式</span>
+        <van-grid>
+          <van-grid-item to="/my/friends">
+            <template #icon>
+              <van-icon name="qq" size="23" style="margin-bottom: 8px;color: #0a0dd2"/>
+            </template>
+          </van-grid-item>
+          <van-grid-item to="/my/friends">
+            <template #icon>
+              <van-icon name="wechat" size="23" style="margin-bottom: 8px;color: #0a0dd2"/>
+            </template>
+          </van-grid-item>
+          <van-grid-item to="/user/email/login">
+            <template #icon>
+              <van-icon name="envelop-o" size="23" style="margin-bottom: 8px;color: #0a0dd2"/>
+            </template>
+          </van-grid-item>
+        </van-grid>
+      </div>
     </van-row>
     <copyright/>
   </div>
@@ -66,7 +88,6 @@ const onSubmit = async () => {
     userAccount: userAccount.value,
     userPassword: password.value
   })
-  console.log(result)
   if (result.code === 0 && result.data) {
     Toast("登录成功")
     // const redirectUrl = route?.query?.redirect ?? '/'
@@ -81,4 +102,28 @@ const onSubmit = async () => {
 
 
 <style scoped>
+
+.ways {
+  width: 80%;
+  margin: 7.6667vw auto;
+  text-align: center;
+}
+
+.ways > span {
+  display: block;
+  margin-bottom: 5.3333vw;
+  color: #999999;
+}
+
+.ways div {
+  display: flex;
+  width: 80%;
+  margin: 0 auto;
+  justify-content: space-around;
+}
+
+.ways div span {
+  font-size: 8.3333vw;
+}
+
 </style>

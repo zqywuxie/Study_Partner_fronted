@@ -82,7 +82,6 @@ const OnAfterRead = async (file) => {
   })
   editUser.value.editValue = res.data;
   // 此时可以自行将文件上传至服务器
-  console.log(editUser.value.editValue);
 };
 // const goBack = () => {
 //   router.go(-1)
@@ -98,7 +97,7 @@ const onSubmit = async () => {
     Toast.fail("用户未登录")
     return
   }
-  const result = await myAxios.post('/user/change', {
+  const result = await myAxios.post('/user/update', {
     'id': currentUser.id,
     //动态传参
     [editUser.value.editKey as string]: editUser.value.editValue,

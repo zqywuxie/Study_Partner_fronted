@@ -12,7 +12,6 @@ export type UserType = {
     email: string;
     userStatus: number;
     userRole: number;
-    planetCode: string;
     tags: string;
     createTime: Date;
 };

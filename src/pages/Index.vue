@@ -4,30 +4,60 @@
       background="#ecf9ff"
       left-icon="volume-o"
       style="margin-bottom: 10px;margin-top: -10px"
-      text="校园有着你朗朗书声，有着你写不完的试卷，有着你忘不掉的老师，有着你共同学习的同学，在这里你可以尽情发挥你最好的水平。在这里可以找到志同道合的校友奋笔直追！！"
+      text="在这个校园里，我们不仅有共同学习的同学，更有志同道合的伙伴。让我们一起努力，共同追求梦想，创造更美好的未来！"
   />
-  <van-cell center title="匹配模式">
-    <template #right-icon>
-      <van-switch v-model="checked" size="24"/>
-    </template>
-  </van-cell>
-  <user-card-list :user-list="userList" :loading="loading"></user-card-list>
-  <van-empty v-if="!userList||userList.length<1" description="数据为空"/>
+
+  <van-tabs v-model:active="active" @change="changeTab">
+    <van-tab title="🤩伙伴匹配">
+      <van-cell center title="匹配模式">
+        <template #right-icon>
+          <van-switch v-model="checked" size="24"/>
+        </template>
+      </van-cell>
+      <user-card-list :user-list="userList" :loading="loading"></user-card-list>
+      <van-empty v-if="!userList||userList.length<1" description="数据为空"/>
+    </van-tab>
+    <van-tab title="🏠博客广场">
+      <blog-card-list :loading="loading" :blog-list="blogList"/>
+      <van-empty v-if="!userList||userList.length<1" description="数据为空"/>
+    </van-tab>
+  </van-tabs>
+
+
 </template>
 
 <script setup lang="ts">
 import {useRoute} from "vue-router";
-import myAxios from "../plugins/MyAxios.ts";
+import myAxios from "../plugins/MyAxios";
 import {onMounted, ref, watchEffect} from "vue";
 import {Toast} from "vant";
 import UserCardList from "../components/UserCardList.vue";
+import BlogCardList from "../components/BlogCardList.vue";
 
 const checked = ref<boolean>(false);
 
+const active = ref(0)
 const route = useRoute()
 const {tags} = route.query;
 const userList = ref([])
+const blogList = ref([])
 const loading = ref(true)
+
+const changeTab = async (name) => {
+  if (name === 1) {
+    const res = await myAxios.get("/blog/list", {
+      params: {
+        currentPage: 1
+      }
+    }).then(function (response) {
+      Toast.success("博客信息加载成功")
+      return response?.data?.records
+    }).catch(function (error) {
+      console.log("/blog/list:" + error)
+    })
+    blogList.value = res
+  }
+}
 const loadData = async () => {
   loading.value = true
   let userListData;
@@ -38,9 +68,7 @@ const loadData = async () => {
         pageNum: 1
       },
     }).then(function (response) {
-      // console.log("/user/recommend" + response)
       Toast.success("请求成功")
-      console.log(response?.data?.records)
       return response?.data?.records
     }).catch(function (error) {
       console.log("/user/recommend" + error)

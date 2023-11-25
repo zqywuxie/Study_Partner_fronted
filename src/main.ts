@@ -11,6 +11,7 @@ import 'vant/es/toast/style';
 // Dialog
 import 'vant/es/dialog/style';
 import './global.css'
+import ChatPage from "./pages/Chat/ChatPage.vue";
 
 
 const router = VueRouter.createRouter({
@@ -21,4 +22,5 @@ const router = VueRouter.createRouter({
 const app = createApp(App);
 app.use(Vant)
 app.use(router)
+app.component("chat-layout", ChatPage)
 app.mount('#app')

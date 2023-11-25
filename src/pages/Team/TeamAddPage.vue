@@ -2,12 +2,17 @@
   <div id="teamAddPage">
     <van-form @submit="onSubmit">
       <van-cell-group inset>
+
+        <van-row justify="center">
+          <van-uploader v-model="fileList" :after-read="afterRead" :max-count="1"/>
+        </van-row>
         <van-field
             v-model="addTeamData.name"
             name="name"
             label="队伍名"
             placeholder="请输入队伍名"
             :rules="[{ required: true, message: '请输入队伍名' }]"
+            left-icon="search"
         />
         <van-field
             v-model="addTeamData.description"
@@ -16,6 +21,7 @@
             label="队伍描述"
             type="textarea"
             placeholder="请输入队伍描述"
+            left-icon="description"
         />
         <van-field
             is-link
@@ -24,6 +30,7 @@
             label="过期时间"
             :placeholder="addTeamData.expireTime ?? '点击选择过期时间'"
             @click="showPicker = true"
+            left-icon="underway-o"
         />
         <van-popup v-model:show="showPicker" position="bottom">
           <van-datetime-picker
@@ -34,14 +41,14 @@
               :min-date="minDate"
           />
         </van-popup>
-        <van-field name="stepper" label="最大人数">
+        <van-field name="stepper" label="最大人数" left-icon="friends-o">
           <template #input>
             <van-stepper v-model="addTeamData.maxNum" max="10" min="3"/>
           </template>
         </van-field>
-        <van-field name="radio" label="队伍状态">
+        <van-field name="radio" label="队伍状态" left-icon="clock-o">
           <template #input>
-            <van-radio-group v-model="addTeamData.status" direction="horizontal">
+            <van-radio-group v-model="addTeamData.status" direction="horizontal" >
               <van-radio name="0">公开</van-radio>
               <van-radio name="1">私有</van-radio>
               <van-radio name="2">加密</van-radio>
@@ -74,9 +81,16 @@ import {ref} from "vue";
 import myAxios from "../../plugins/MyAxios";
 import {Toast} from "vant";
 
+const fileList = ref([]);
+const afterRead = (file) => {
+  // 此时可以自行将文件上传至服务器
+  avatar.value = file.file
+};
 const router = useRouter();
 // 展示日期选择器
 const showPicker = ref(false);
+
+const avatar = ref()
 
 const minDate = new Date();
 
@@ -87,6 +101,7 @@ const initFormData = {
   "maxNum": 3,
   "password": "",
   "status": 0,
+  "avatarUrl": ""
 }
 
 
@@ -95,19 +110,32 @@ const addTeamData = ref({...initFormData})
 
 // 提交
 const onSubmit = async () => {
+  const uploadRes = await myAxios.post("/fileOss/upload", {
+    'file': avatar.value,
+  }, {
+    headers: {'Content-Type': 'multipart/form-data'},
+  })
+
+  if (uploadRes.code == 0) {
+    addTeamData.value.avatarUrl = uploadRes.data
+  }
+
   const postData = {
     ...addTeamData.value,
     status: Number(addTeamData.value.status)
   }
   // todo 前端参数校验
   const res = await myAxios.post("/team/add", postData);
-  if (res?.code === 0 && res.data){
-    Toast.success('添加成功');
-    router.push({
-      path: '/team',
-      //replace 表示无法回退页面
-      replace: true,
-    });
+  if (res?.code === 0 && res.data) {
+    Toast.success('队伍添加成功，正在跳转');
+    setTimeout(() => {
+      router.push({
+        path: '/team',
+        //replace 表示无法回退页面
+        replace: true,
+      });
+    }, 500)
+
   } else {
     Toast.success('添加失败');
   }

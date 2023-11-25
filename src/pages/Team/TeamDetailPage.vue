@@ -29,7 +29,7 @@
         </template>
       </van-cell>
       <van-divider/>
-      <van-cell :value="teamData.createUser.username" center title="队长">
+      <van-cell :value="createUser.username" center title="队长">
         <template #icon>
           <van-icon name="manager-o" size="18"/>
         </template>
@@ -77,7 +77,12 @@
           </van-cell>
         </template>
       </van-popover>
+
+      <van-divider content-position="left">管理员</van-divider>
+      <user-card-list :loading="false" :userList="teamData.manageUserList"></user-card-list>
       <van-divider content-position="left">队伍成员</van-divider>
+      <!--      <user-card-list :loading="false" :userList="teamData.createUser"></user-card-list>-->
+
       <user-card-list :loading="false" :userList="teamData.joinUserList"></user-card-list>
     </van-cell-group>
   </template>
@@ -100,6 +105,7 @@ import moment from "moment";
 import UserCardList from "../../components/UserCardList.vue";
 import {TeamType} from "../../models/team";
 import {getCurrentUser} from "../../service/user";
+import UserLoginPage from "../User/UserLoginPage.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -110,6 +116,7 @@ const currentUser = ref();
 const joinTeamId = ref();
 const showPopover = ref(false);
 const operations = ref([]);
+const createUser = ref()
 
 const id = route.query.id;
 onMounted(async () => {
@@ -123,11 +130,15 @@ onMounted(async () => {
           id,
         }
       });
-      console.log(res)
-
       if (res?.code === 0) {
-      // 对tags进行json序列化
+        // 对tags进行json序列化
         if (res.data) {
+          res.data.manageUserList.forEach(user => {
+            if (user) {
+              user.tags = JSON.parse(user.tags)
+            }
+          })
+          createUser.value = res.data.manageUserList[0]
           res.data.joinUserList.forEach(user => {
             if (user) {
               user.tags = JSON.parse(user.tags)

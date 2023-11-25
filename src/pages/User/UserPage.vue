@@ -6,13 +6,21 @@
             round
             width="80"
             height="80"
+            class="avatar"
             :src="user?.avatarUrl"
             @click="toUserUpdatePage"
 
         />
-        <van-cell :title="user.username" is-link to="/user/update" style="width: 260px" :center="true">
+        <div class="custom-cell" @click="toUserUpdatePage">
+          <div class="username">{{ user.username }}</div>
+          <div class="user-info">
+            <span class="count-label" @click.stop="router.push('/')">关注: {{ user.follow }}</span>
+            <span class="count-label" @click.stop="router.push('/')">点赞: {{ user.likeCount }}</span>
+            <span class="count-label" @click.stop="router.push('/')">粉丝: {{ user.fans }}</span>
+          </div>
+        </div>
 
-        </van-cell>
+
       </van-space>
       <van-cell :value="user.profile" center is-link title="个人简介"/>
       <van-cell center style="margin-top: 15px">
@@ -20,7 +28,7 @@
           <span style="margin-left: 20px">我的标签</span>
         </template>
         <template #value>
-          <van-tag v-for="tag in user.tags" plain type="danger" style="margin-right: 8px;margin-top: 8px">
+          <van-tag v-for="tag in tags" plain type="danger" style="margin-right: 8px;margin-top: 8px">
             {{ tag }}
           </van-tag>
         </template>
@@ -42,14 +50,14 @@
             <van-icon class-prefix="my-icon" name="wofadetiezi" size="23" style="margin-bottom: 8px;color: #10d1d9"/>
           </template>
         </van-grid-item>
-        <van-grid-item text="好友列表" to="/my/friends">
+        <van-grid-item text="好友列表" to="/friend/list">
           <template #icon>
             <van-icon name="contact" size="23" style="margin-bottom: 8px;color: #0a0dd2"/>
           </template>
         </van-grid-item>
         <van-grid-item text="关注列表" to="/my/follow">
           <template #icon>
-            <van-icon  name="friends" size="23" style="margin-bottom: 8px;color: #0a0dd2"/>
+            <van-icon name="friends" size="23" style="margin-bottom: 8px;color: #0a0dd2"/>
           </template>
         </van-grid-item>
 
@@ -74,7 +82,7 @@
         <!--          </template>-->
         <!--        </van-grid-item>-->
       </van-grid>
-      <van-cell title="我的信息" style="padding: 20px" is-link to="/user/update" :center="true">
+      <van-cell title="我的信息" style="padding: 20px" is-link @click="toUserUpdatePage" :center="true">
         <template #icon>
           <van-icon name="setting-o" size="20" style="margin-right: 5px" color="#1989fa"/>
         </template>
@@ -92,25 +100,26 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeRouteUpdate, useRoute, useRouter} from "vue-router";
-import {onMounted, reactive, ref, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
+import {nextTick, onMounted, ref, watch} from "vue";
 import myAxios from "../../plugins/MyAxios";
-import moment from "moment";
 import {Toast} from "vant";
 import {getCurrentUser} from "../../service/user";
 
 const router = useRouter()
 const user = ref([])
 const route = useRoute()
+const tags = ref([])
 watch(route, (to, from) => {
-  console.log("123")
   router.go(0)
 })
 
 const toUserUpdatePage = () => {
-  router.push("/user/update")
+  setTimeout(() => {
+    router.push("/user/update")
+  }, 500)
 }
-const quite = () => {
+const logout = () => {
   const result = myAxios.post("/user/outLogin")
       .then((res) => {
         if (res?.data === 1 && res?.code === 0) {
@@ -123,27 +132,94 @@ const quite = () => {
 }
 onMounted(async () => {
   const result = await getCurrentUser()
+
+  //todo 数据没更新??
   if (result) {
+    console.log(result.tags)
+    // const tags = JSON.parse(result.tags)
+    tags.value = JSON.parse(result.tags)
     user.value = result
-    user.value.tags = JSON.parse(result.tags)
-    // user.value = JSON.parse(result.tags)
+
     Toast("获得用户信息成功")
   } else {
     Toast("获得用户信息失败")
   }
+  await fetchFollowersCount();
+  await fetchLikeCount();
+  await nextTick()
 })
 
+const fetchFollowersCount = async () => {
+  const fans = await myAxios.get("/follow/fansCount");
+  const myFollow = await myAxios.get("/follow/myCount");
+  user.value.fans = fans.data;
+  user.value.follow = myFollow.data;
+  // You may want to perform additional logic or error handling here
+};
+
+const fetchLikeCount = async () => {
+  const likeCount = await myAxios.get("/like/count");
+  user.value.likeCount = likeCount.data;
+  // Additional logic or error handling can be added here
+};
 const refresh = () => {
   location.reload();
 }
 </script>
 
 <style scoped>
+.username {
+  font-size: 18px; /* Adjust font size as needed */
+  font-weight: bold; /* Add bold font style if desired */
+  color: #333; /* Specify the desired text color */
+  margin-bottom: 5px; /* Add margin for spacing */
+}
+.custom-cell {
+  text-align: center;
+}
+
+.username {
+  margin-bottom: 5px; /* 调整名字与下方的间距 */
+}
+
+.user-info {
+  margin-top: 10px;
+  cursor: pointer;
+  color: #007bff;
+//text-decoration: underline;
+}
+
+.count-label {
+  margin-top: 10px;
+  cursor: pointer;
+  color: #007bff;
+//text-decoration: underline;
+}
+
+.count-label:hover {
+  color: #0056b3;
+}
+
+
 #userPage {
   margin-top: -20px;
 }
 
 :deep(.van-grid-item__text) {
   font-size: 12px;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-left: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out;
+}
+
+.avatar:hover {
+  transform: scale(1.2); /* 可根据需要调整放大倍数 */
+  cursor: pointer;
 }
 </style>

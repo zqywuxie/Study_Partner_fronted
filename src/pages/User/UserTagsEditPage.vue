@@ -57,6 +57,7 @@ const checkSame = ref(0)
 
 
 const onClickNav = (item) => {
+  //todo 年级性别只能选择一个标签
   if (item == 0 || item == 1) {
     let genderChild = UserTagsList.find(tag => tag.text == (item == 1 ? "性别" : "年级")).children.map((user) => user.text);
     let res = activeIds.value
@@ -104,7 +105,6 @@ const onCancel = () => {
 //将原有标签设置进去
 onMounted(() => {
   const currentTags = editTags.value.currentValue;
-  console.log(typeof currentTags)
   if (typeof currentTags == "string") {
     activeIds.value = JSON.parse(currentTags);
   } else {
@@ -129,17 +129,17 @@ const doEditTags = async () => {
     Toast.fail("用户未登录")
     return;
   }
-  // const res = await myAxios.post("/user/change", {
-  //   id: currentUser.id,
-  //   tags: JSON.stringify(activeIds.value),
-  // })
-  // if (res.code === 0 && res.data > 0) {
-  //   Toast.success("修改成功！");
-  //   setCurrentUserState(null)
-  //   router.go(-1)
-  // } else {
-  //   Toast.fail("更新失败！");
-  // }
+  const res = await myAxios.post("/user/update", {
+    id: currentUser.id,
+    tags: JSON.stringify(activeIds.value),
+  })
+  if (res.code === 0 && res.data > 0) {
+    Toast.success("修改成功！");
+    setCurrentUserState(null)
+    router.go(-1)
+  } else {
+    Toast.fail("更新失败！");
+  }
 }
 </script>
 

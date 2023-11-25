@@ -8,7 +8,12 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     BlogCardList: typeof import('./src/components/BlogCardList.vue')['default']
+    CommentList: typeof import('./src/components/CommentList.vue')['default']
     CopyRight: typeof import('./src/components/CopyRight.vue')['default']
+    Emojis: typeof import('./src/components/Emojis.vue')['default']
+    NewCommentList: typeof import('./src/components/NewCommentList.vue')['default']
+    NewFansList: typeof import('./src/components/NewFansList.vue')['default']
+    NewLikeList: typeof import('./src/components/NewLikeList.vue')['default']
     Refresh: typeof import('./src/components/refresh.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

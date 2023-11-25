@@ -13,6 +13,7 @@
           }}
         </van-tag>
       </template>
+
       <template #bottom>
         <div>
           {{ '最大人数: ' + team.maxNum }}
@@ -28,6 +29,12 @@
         </div>
       </template>
       <template #footer>
+
+        <van-button  v-if="team.hasJoin" size="small" type="primary" @click="toChatRoom(team.id,team.name)">
+         进入群聊
+        </van-button>
+
+
         <van-button v-if="!team.hasJoin&&team.userId!==currentUser?.id" size="small" type="primary" plain
                     @click="preJoinTeam(team)">加入队伍
         </van-button>
@@ -40,7 +47,7 @@
         <van-button v-if="team.hasJoin&&team.userId!=currentUser?.id" size="small" type="primary"
                     @click="doQuitTeam(team.id)">退出队伍
         </van-button>
-        <van-button v-if="currentUser?.id==team.userId" size="small" type="primary" @click="doDeleteTeam(team.id)">
+        <van-button  v-if="currentUser?.id==team.userId" size="small" type="danger" @click="doDeleteTeam(team.id)">
           解散队伍
         </van-button>
       </template>
@@ -100,7 +107,6 @@ const onDelete = () => {
 }
 const onpaymentyes = () => {
   doJoinTeam()
-  // console.log("确定支付" + password.value)
 }
 const canclePopup = () => {
   password.value = ''
@@ -143,6 +149,17 @@ const doJoinTeam = async () => {
   } else {
     Toast.fail('加入失败' + (res.description ? `，${res.description}` : ''));
   }
+}
+
+const toChatRoom = (id, name) => {
+  router.push({
+    path: "/chat",
+    query: {
+      teamId: id,
+      teamName: name,
+      teamType: 2
+    }
+  })
 }
 
 const refresh = () => {
