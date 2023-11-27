@@ -14,9 +14,9 @@
         <div class="custom-cell" @click="toUserUpdatePage">
           <div class="username">{{ user.username }}</div>
           <div class="user-info">
-            <span class="count-label" @click.stop="router.push('/')">关注: {{ user.follow }}</span>
-            <span class="count-label" @click.stop="router.push('/')">点赞: {{ user.likeCount }}</span>
-            <span class="count-label" @click.stop="router.push('/')">粉丝: {{ user.fans }}</span>
+            <span class="count-label" @click.stop="router.push('/user/follows')">关注: {{ user.follow }}</span>
+            <span class="count-label" @click.stop="toLikePage">点赞: {{ user.likeCount }}</span>
+            <span class="count-label" @click.stop="router.push('/user/fans')">粉丝: {{ user.fans }}</span>
           </div>
         </div>
 
@@ -55,17 +55,17 @@
             <van-icon name="contact" size="23" style="margin-bottom: 8px;color: #0a0dd2"/>
           </template>
         </van-grid-item>
-        <van-grid-item text="关注列表" to="/my/follow">
+        <van-grid-item text="关注列表" to="/user/follows">
           <template #icon>
             <van-icon name="friends" size="23" style="margin-bottom: 8px;color: #0a0dd2"/>
           </template>
         </van-grid-item>
 
-        <van-grid-item text="粉丝列表" to="/my/fans">
-          <template #icon>
-            <van-icon class-prefix="my-icon" name="wodefensi" color="#65cdf2" size="23"/>
-          </template>
-        </van-grid-item>
+        <!--        <van-grid-item text="粉丝列表" to="/my/fans">-->
+        <!--          <template #icon>-->
+        <!--            <van-icon class-prefix="my-icon" name="wodefensi" color="#65cdf2" size="23"/>-->
+        <!--          </template>-->
+        <!--        </van-grid-item>-->
         <!--        <van-grid-item text="用户签到" @click="userSign(user.id)">-->
         <!--          <template #icon>-->
         <!--            <van-icon name="bulb-o" size="23" style="margin-bottom: 8px;color: #0a0dd2"/>-->
@@ -105,15 +105,29 @@ import {nextTick, onMounted, ref, watch} from "vue";
 import myAxios from "../../plugins/MyAxios";
 import {Toast} from "vant";
 import {getCurrentUser} from "../../service/user";
+import {MessageTypeEnum} from "../../enum/MessageTypeEnum";
 
 const router = useRouter()
 const user = ref([])
 const route = useRoute()
 const tags = ref([])
+let likeList = []
 watch(route, (to, from) => {
   router.go(0)
 })
 
+const toLikePage = async () => {
+  let blog_like_list = await myAxios.get("/message/get/" + MessageTypeEnum.BLOG_LIKE)
+
+  let blog_comment_like_list = await myAxios.get("/message/get/" + MessageTypeEnum.BLOG_COMMENT_LIKE)
+  likeList = blog_comment_like_list.data.concat(blog_like_list.data)
+  await router.push({
+    path: "/message/like",
+    query: {
+      likeList: JSON.stringify(likeList),
+    }
+  })
+}
 const toUserUpdatePage = () => {
   setTimeout(() => {
     router.push("/user/update")
@@ -139,7 +153,6 @@ onMounted(async () => {
     // const tags = JSON.parse(result.tags)
     tags.value = JSON.parse(result.tags)
     user.value = result
-
     Toast("获得用户信息成功")
   } else {
     Toast("获得用户信息失败")
@@ -174,6 +187,7 @@ const refresh = () => {
   color: #333; /* Specify the desired text color */
   margin-bottom: 5px; /* Add margin for spacing */
 }
+
 .custom-cell {
   text-align: center;
 }
@@ -186,14 +200,12 @@ const refresh = () => {
   margin-top: 10px;
   cursor: pointer;
   color: #007bff;
-//text-decoration: underline;
 }
 
 .count-label {
   margin-top: 10px;
   cursor: pointer;
   color: #007bff;
-//text-decoration: underline;
 }
 
 .count-label:hover {

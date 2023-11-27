@@ -8,7 +8,7 @@
     <van-cell icon="contact" title="昵称" :value="user?.username"/>
     <van-cell title="标签">
       <template #value>
-        <van-tag v-if="user?.tags.length>0" v-for="tag in user?.tags" plain type="danger"
+        <van-tag v-if="user?.tags" v-for="tag in user?.tags" plain type="danger"
                  style="margin-right: 8px">
           {{ tag }}
         </van-tag>
@@ -54,9 +54,10 @@
   </div>
 
 
-  <van-dialog v-model:show="showAddUserApply" :title="'添加好友：' + user?.username.slice(0, 10)" show-cancel-button @cancel="clearInput"  @confirm="toAddUserApply(user?.id)">
+  <van-dialog v-model:show="showAddUserApply" :title="'添加好友：' + user?.username.slice(0, 10)" show-cancel-button
+              @cancel="clearInput" @confirm="toAddUserApply(user?.id)">
     <div class="apply-dialog-content">
-      <img :src="user?.avatarUrl" alt="用户头像" class="user-avatar" />
+      <img :src="user?.avatarUrl" alt="用户头像" class="user-avatar"/>
       <van-field
           v-model="applyMessage"
           label="验证信息"
@@ -64,9 +65,9 @@
           input-align="center"
           clearable
       >
-<!--        <template #button>-->
-<!--          <van-icon name="clear" @click="clearInput" />-->
-<!--        </template>-->
+        <!--        <template #button>-->
+        <!--          <van-icon name="clear" @click="clearInput" />-->
+        <!--        </template>-->
       </van-field>
     </div>
   </van-dialog>
@@ -98,7 +99,7 @@ onMounted(async () => {
   }
 })
 
-const clearInput = () =>{
+const clearInput = () => {
   // 清空输入框
   applyMessage.value = '';
 }
@@ -107,8 +108,10 @@ const toAddUserApply = async (id) => {
     "receiveId": id,
     "remark": applyMessage.value
   })
-  if (status) {
+  if (status.code === 0) {
     Toast.success("申请成功")
+  } else {
+    Toast.fail("申请失败")
   }
 }
 const followUser = async () => {

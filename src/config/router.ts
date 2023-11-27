@@ -25,7 +25,6 @@ import BlogPage from "../pages/Blog/BlogPage.vue";
 import UserMyFriends from "../pages/User/UserMyFriends.vue";
 import UserFriendsApplicationPage from "../pages/Chat/UserFriendsApplicationPage.vue";
 import ChatPage from "../pages/Chat/ChatPage.vue";
-import ChatMessagePage from "../pages/Chat/ChatMessagePage.vue";
 import CommentPage from "../pages/Chat/CommentPage.vue";
 import LikePage from "../pages/Chat/LikePage.vue";
 import FansPage from "../pages/Chat/FansPage.vue";

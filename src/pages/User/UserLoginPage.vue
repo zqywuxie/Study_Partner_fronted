@@ -48,12 +48,12 @@
       <div class="ways" style="margin-top: -5px">
         <span>其他登录方式</span>
         <van-grid>
-          <van-grid-item to="/my/friends">
+          <van-grid-item @click="()=>{Toast.fail('暂不支持QQ登录')}">
             <template #icon>
               <van-icon name="qq" size="23" style="margin-bottom: 8px;color: #0a0dd2"/>
             </template>
           </van-grid-item>
-          <van-grid-item to="/my/friends">
+          <van-grid-item @click="()=>{Toast.fail('暂不支持微信登录')}">
             <template #icon>
               <van-icon name="wechat" size="23" style="margin-bottom: 8px;color: #0a0dd2"/>
             </template>
@@ -98,6 +98,10 @@ const onSubmit = async () => {
     Toast("登录失败")
   }
 };
+
+const QQLogin = ()=> {
+
+}
 </script>
 
 

@@ -46,14 +46,17 @@ const router = useRouter()
 const route = useRoute()
 const DEFAULT_TITLE = "伙伴匹配"
 const title = ref(DEFAULT_TITLE)
-const onClickLeft = () => {
-  // router.back();
-  // const currentPath =;
-  const currentPath = route.path
-  if (currentPath !== '/') {
-    router.back()
-  }
-}
+const onClickLeft =  () => {
+  // const currentPath = route.path;
+  //
+  // if (currentPath.includes("/message")) {
+  //   router.push("/message");
+  // } else if (currentPath !== '/') {
+  //   router.go(-1);
+  // }
+ router.go(-1)
+};
+
 const onClickRight = () => {
   router.push('/search')
 }

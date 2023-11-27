@@ -1,56 +1,48 @@
 <template>
   <div>
+    <van-empty
+        v-if="(!resList || resList.length===0) && loading===false"
+        image="https://fastly.jsdelivr.net/npm/@vant/assets/custom-empty-image.png"
+        image-size="80"
+        description="你还没有好友，快去认识新伙伴吧"
+    />
     <!-- 头部信息，包括评论者头像和名字 -->
-    <new-fans-list :comment-list="resList"/>
+    <van-cell-group v-for="comment in resList">
+      <van-row class="header">
+        <van-col span="4">
+          <img class="avatar" :src="comment.fromUser.avatarUrl" alt="头像"/>
+        </van-col>
+        <van-col span="16">
+          <div class="name">{{ comment.fromUser.username }}</div>
+          <div class="info">{{ comment.fromUser.profile }}</div>
+        </van-col>
+        <van-col span="4">
+          <!-- 博文封面 -->
+          <van-button type="success" round class="custom-button">关注</van-button>
+        </van-col>
+      </van-row>
+    </van-cell-group>
   </div>
 </template>
 
-<script setup>
-import {ref} from 'vue';
-import NewCommentList from "../../components/NewCommentList.vue";
-import NewLikeList from "../../components/NewLikeList.vue";
-import NewFansList from "../../components/NewFansList.vue";
+<script setup lang="ts">
+import {onMounted, ref} from 'vue';
+import {useRoute} from "vue-router"
+import myAxios from "../../plugins/MyAxios";
+import {MessageTypeEnum} from "../../enum/MessageTypeEnum";
 
-const commenter = {
-  avatar: 'https://wuxie-image.oss-cn-chengdu.aliyuncs.com/2023/09/19/QQ图片20230807232937.jpg',
-  name: '评论者姓名',
-};
+
 
 const resList = ref([])
 const data = new Date()
-const commentList = [
-  {
-    commenter: {
-      avatarUrl: 'https://wuxie-image.oss-cn-chengdu.aliyuncs.com/2023/09/19/QQ图片20230807232937.jpg',
-      username: '评论者姓名1',
-    },
-    replyInfo: '回复了我的评论1' + data,
-    content: '这是一条新评论的内容1。',
-    blogCover: 'https://wuxie-image.oss-cn-chengdu.aliyuncs.com/2023/09/19/QQ图片20230807232937.jpg',
-  },
-  {
-    commenter: {
-      avatarUrl: 'https://wuxie-image.oss-cn-chengdu.aliyuncs.com/2023/09/19/QQ图片20230807232937.jpg',
-      username: '评论者姓名2',
-    },
-    replyInfo: '回复了我的评论2' + data,
-    content: '这是一条新评论的内容2。',
-    blogCover: 'https://wuxie-image.oss-cn-chengdu.aliyuncs.com/2023/09/19/QQ图片20230807232937.jpg',
-  },
-  // 添加更多的评论对象...
-];
-
-resList.value = commentList
-
-const handleComment = () => {
-  // 处理评论按钮点击事件
-  console.log('点击了评论按钮');
-};
-
-const handleLike = () => {
-  // 处理点赞按钮点击事件
-  console.log('点击了点赞按钮');
-};
+const loading = ref(true)
+let route = useRoute();
+onMounted(async () => {
+  await myAxios.get("/message/read/"+MessageTypeEnum.FOLLOW_NOTIFICATIONS)
+  console.log(JSON.parse(route.query.fansList))
+  resList.value = JSON.parse(route.query.fansList)
+  loading.value = false
+})
 </script>
 
 <style scoped>
@@ -60,7 +52,9 @@ const handleLike = () => {
 }
 
 .avatar {
+  margin-left: -10px;
   width: 100%;
+  height: 100%;
   border-radius: 50%;
 }
 
@@ -75,27 +69,4 @@ const handleLike = () => {
   color: #888;
 }
 
-.comment-content {
-  padding: 15px;
-  font-size: 16px;
-}
-
-.buttons {
-  margin-top: 15px;
-  text-align: center;
-}
-
-.van-icon {
-  font-size: 20px;
-  margin-right: 5px;
-}
-
-.button-text {
-  font-size: 14px;
-}
-
-.cover-image {
-  width: 100%;
-  border-radius: 8px;
-}
 </style>

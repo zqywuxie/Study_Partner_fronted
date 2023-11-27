@@ -1,19 +1,19 @@
 <template>
   <div id="messagePage" style="margin-top: 1px">
     <van-grid :border="false">
-      <van-grid-item v-if="commentNum === 0" icon="comment" icon-color="#767ffe" text="评论" to="/message/comment"/>
-      <van-grid-item v-else icon="comment" :badge="commentNum" icon-color="#767ffe" text="评论" to="/message/comment"/>
+      <van-grid-item v-if="commentNum === 0" icon="comment" icon-color="#767ffe" text="评论" @click="toCommentPage"/>
+      <van-grid-item v-else icon="comment" :badge="commentNum" icon-color="#767ffe" text="评论" @click="toCommentPage"/>
 
-      <van-grid-item v-if="likeNum===0" icon="good-job" icon-color="#639efc" text="赞" to="/message/like"/>
-      <van-grid-item v-else icon="good-job" icon-color="#639efc" text="赞" :badge="likeNum" to="/message/like"/>
+      <van-grid-item v-if="likeNum===0" icon="good-job" icon-color="#639efc" text="赞" @click="toLikePage"/>
+      <van-grid-item v-else icon="good-job" icon-color="#639efc" text="赞" :badge="likeNum" @click="toLikePage"/>
 
       <van-grid-item icon="friends" v-if="friendApplication === 0" icon-color="#a778fc" text="新朋友"
-                     to="/message/application"/>
-      <van-grid-item icon="friends" v-else icon-color="#a778fc" text="新朋友" to="/message/application"
+                     @click="toApplicationPage"/>
+      <van-grid-item icon="friends" v-else icon-color="#a778fc" text="新朋友" @click="toApplicationPage"
                      :badge="friendApplication"/>
 
 
-      <van-grid-item to="/message/fans" v-if="fansNum===0">
+      <van-grid-item @click="toFansPage" v-if="fansNum===0">
         <template #icon>
           <van-icon class-prefix="my-icon" name="wodefensi" color="#65cdf2" size="28"/>
         </template>
@@ -21,7 +21,7 @@
           <span style="margin-top: 8px;font-size: 14px">粉丝</span>
         </template>
       </van-grid-item>
-      <van-grid-item to="/message/fans" v-else :badge="fansNum">
+      <van-grid-item @click="toFansPage" v-else :badge="fansNum">
         <template #icon>
           <van-icon class-prefix="my-icon" name="wodefensi" color="#65cdf2" size="28"/>
         </template>
@@ -130,13 +130,18 @@ import myAxios from "../../plugins/MyAxios"
 import {useRouter} from "vue-router";
 import defaultImg from "../../assets/avatar.jpg";
 import favicon from "../../assets/logo.ico"
+import {MessageTypeEnum} from "../../enum/MessageTypeEnum";
 
 const teamList = ref()
 const privateChatUserList = ref()
 const likeNum = ref(0)
+let likeList: any[] = [];
 const commentNum = ref(0)
+let commentList: any[] = []
 const fansNum = ref(0)
+let fansList: any[] = [];
 const friendApplication = ref(0)
+let friendApplicationList: any[] = []
 onMounted(async () => {
   // let res = await myAxios.get("/team/list/my/join/all");
   // if (res?.code === 0) {
@@ -152,10 +157,36 @@ onMounted(async () => {
   // }
 
   let userList = await myAxios.get("/chat/privateUser")
-  console.log(userList)
   if (userList.code == 0) {
     privateChatUserList.value = userList.data
   }
+  let blog_like = await myAxios.get("/message/num/" + MessageTypeEnum.BLOG_LIKE)
+  let blog_like_list = await myAxios.get("/message/get/" + MessageTypeEnum.BLOG_LIKE)
+
+  let blog_comment_like = await myAxios.get("/message/num/" + MessageTypeEnum.BLOG_COMMENT_LIKE)
+  let blog_comment_like_list = await myAxios.get("/message/get/" + MessageTypeEnum.BLOG_COMMENT_LIKE)
+  // console.log(blog_comment_like_list.data)
+  likeNum.value = blog_like.data + blog_comment_like.data
+  let comment_add = await myAxios.get("/message/num/" + MessageTypeEnum.COMMENT_ADD)
+  let comment_add_list = await myAxios.get("/message/get/" + MessageTypeEnum.COMMENT_ADD)
+  commentNum.value = comment_add.data
+  commentList = comment_add_list.data
+  //todo
+  // let system_messages = await myAxios.get("/message/num/" + MessageTypeEnum.SYSTEM_MESSAGES)
+
+  let follow_notifications = await myAxios.get("/message/num/" + MessageTypeEnum.FOLLOW_NOTIFICATIONS)
+  let follow_notifications_list = await myAxios.get("/message/get/" + MessageTypeEnum.FOLLOW_NOTIFICATIONS)
+  console.log(follow_notifications_list.data)
+  console.log(follow_notifications.data)
+  fansNum.value = follow_notifications.data
+  fansList = follow_notifications_list.data
+
+  let friend_application = await myAxios.get("/message/num/" + MessageTypeEnum.FRIEND_APPLICATION)
+  let friend_application_list = await myAxios.get("/message/get/" + MessageTypeEnum.FRIEND_APPLICATION)
+  friendApplication.value = friend_application.data
+  friendApplicationList = friend_application_list.data
+
+
 })
 let router = useRouter();
 
@@ -169,7 +200,40 @@ const toPrivateChat = (id, username) => {
       userType: 1
     }
   })
+}
 
+const toCommentPage = () => {
+  router.push({
+    path: "/message/comment",
+    query: {
+      commentList: JSON.stringify(commentList)
+    }
+  })
+}
+const toFansPage = () => {
+  router.push({
+    path: "/message/fans",
+    query: {
+      fansList: JSON.stringify(fansList)
+    }
+  })
+}
+const toLikePage = () => {
+  router.push({
+    path: "/message/like",
+    query: {
+      likeList: JSON.stringify(likeList),
+    }
+  })
+}
+
+const toApplicationPage = () => {
+  router.push({
+    path: "/message/application",
+    query: {
+      applicationList: JSON.stringify(friendApplicationList)
+    }
+  })
 }
 const toChatRoom = (id, name) => {
   router.push({
