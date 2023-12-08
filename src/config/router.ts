@@ -1,9 +1,9 @@
 import UserPage from "../pages/User/UserPage.vue"
 import TeamPage from "../pages/Team/Team.vue"
-import SearchPage from "../pages/Search/SearchPage.vue"
+import SearchPage from "../pages/Search/SearchUserPage.vue"
 import EditPage from "../pages/User/UserEditPage.vue"
 import IndexPage from "../pages/Index.vue"
-import SearchResultPage from "../pages/Search/SearchResultPage.vue";
+import SearchResultPage from "../pages/Search/SearchUserResultPage.vue";
 import TeamAddPage from "../pages/Team/TeamAddPage.vue";
 import LoginPage from "../pages/User/UserLoginPage.vue"
 import UserRegisterPage from "../pages/User/UserRegisterPage.vue";
@@ -29,6 +29,7 @@ import CommentPage from "../pages/Chat/CommentPage.vue";
 import LikePage from "../pages/Chat/LikePage.vue";
 import FansPage from "../pages/Chat/FansPage.vue";
 import SystemMessage from "../pages/Chat/SystemMessage.vue";
+import SearchTeamResultPage from "../pages/Search/SearchTeamResultPage.vue";
 
 
 const routes = [
@@ -72,6 +73,7 @@ const routes = [
     {path: '/team/add', component: TeamAddPage, title: "添加队伍"},
     {path: '/team/update', component: TeamUpdatePage, title: "队伍更新"},
     {path: '/team/detail', component: TeamDetailPage, title: "队伍更新"},
+    {path: '/team/search', component: SearchTeamResultPage, title: "队伍搜索展示页"},
     {path: '/chat', component: ChatPage, title: "聊天室"},
 ]
 export default routes

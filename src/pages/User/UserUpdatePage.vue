@@ -14,7 +14,7 @@
           <!--            <img :src="imgSrc" style="width: 48px;height: 48px;border-radius: 50%" alt=""/>-->
           <!--          </van-uploader>-->
         </van-cell>
-        <van-cell icon="user-o" title="用户账号" :value="user.userAccount"/>
+        <van-cell icon="user-o" title="用户账号" :value="user.useraccount"/>
         <van-cell icon="contact" title="昵称" is-link :value="user.username"
                   @click="toEdit('username','昵称',user.username)"/>
         <van-cell title="标签" @click="toEdit('tags', '标签', user.tags)" is-link>
@@ -59,6 +59,8 @@
                 v-model="fileList"
                 :max-count="1"
                 preview-size="200px"
+                :max-size="2 * 1024 * 1024"
+                @oversize="overSize"
             >
               <img :src="imgSrc" style="width: 100%; height: 100%; border-radius: 50%" alt=""/>
             </van-uploader>
@@ -75,6 +77,7 @@ import {onMounted, ref, watch, watchEffect} from "vue";
 import {getCurrentUser} from "../../service/user";
 import myAxios from "../../plugins/MyAxios";
 import {Dialog, Toast} from "vant";
+import {setCurrentUserState} from "../../state/user";
 
 const VanDialog = Dialog.Component;
 
@@ -105,7 +108,7 @@ const handleClick = () => {
 const handleConfirm = async () => {
   let formData = new FormData();
   formData.append("file", fileList.value[0].file)
-  formData.append("userAccount", user.value.userAccount)
+  formData.append("useraccount", user.value.useraccount)
 
   //todo 更新头像
   formData.append("type", "update_avatar")
@@ -123,6 +126,9 @@ const handleConfirm = async () => {
   }
   fileList.value = []
 }
+const refresh = () => {
+  location.reload();
+}
 const onConfirmGender = async ({value}) => {
   const res = await myAxios.post("/user/update", {
     gender: value,
@@ -134,7 +140,8 @@ const onConfirmGender = async ({value}) => {
     Toast.fail("修改失败")
   }
   showPicker.value = false
-  await refresh()
+  // todo 刷新的方法
+  refresh()
 };
 const toEdit = (editKey: string, editName: string, currentValue: string) => {
   if (editKey === 'tags') {
@@ -150,7 +157,7 @@ const toEdit = (editKey: string, editName: string, currentValue: string) => {
     })
   } else {
     if (editKey == 'gender') {
-      currentValue = '1' ? '女' : '男'
+      currentValue === '1' ? '男' : '女'
     }
     router.push({
       path: '/user/edit',
@@ -161,6 +168,10 @@ const toEdit = (editKey: string, editName: string, currentValue: string) => {
       }
     })
   }
+}
+
+const overSize = () => {
+  Toast.fail("单个图片不能超过2M")
 }
 
 const doEditGender = async () => {

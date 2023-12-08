@@ -129,7 +129,7 @@ import {onMounted, ref} from "vue";
 import myAxios from "../../plugins/MyAxios"
 import {useRouter} from "vue-router";
 import defaultImg from "../../assets/avatar.jpg";
-import favicon from "../../assets/logo.ico"
+import favicon from "../../assets/logo.png"
 import {MessageTypeEnum} from "../../enum/MessageTypeEnum";
 
 const teamList = ref()
@@ -166,6 +166,9 @@ onMounted(async () => {
   let blog_comment_like = await myAxios.get("/message/num/" + MessageTypeEnum.BLOG_COMMENT_LIKE)
   let blog_comment_like_list = await myAxios.get("/message/get/" + MessageTypeEnum.BLOG_COMMENT_LIKE)
   // console.log(blog_comment_like_list.data)
+  likeList = blog_like_list.data.concat(blog_comment_like_list.data)
+
+
   likeNum.value = blog_like.data + blog_comment_like.data
   let comment_add = await myAxios.get("/message/num/" + MessageTypeEnum.COMMENT_ADD)
   let comment_add_list = await myAxios.get("/message/get/" + MessageTypeEnum.COMMENT_ADD)
@@ -176,8 +179,8 @@ onMounted(async () => {
 
   let follow_notifications = await myAxios.get("/message/num/" + MessageTypeEnum.FOLLOW_NOTIFICATIONS)
   let follow_notifications_list = await myAxios.get("/message/get/" + MessageTypeEnum.FOLLOW_NOTIFICATIONS)
-  console.log(follow_notifications_list.data)
-  console.log(follow_notifications.data)
+  console.log("follow" + follow_notifications_list.data)
+  console.log("follow" + follow_notifications.data)
   fansNum.value = follow_notifications.data
   fansList = follow_notifications_list.data
 

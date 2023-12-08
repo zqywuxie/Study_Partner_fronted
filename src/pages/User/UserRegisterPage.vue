@@ -1,8 +1,6 @@
 <template>
   <van-row justify="center">
     <van-form @submit="onSubmit">
-
-
       <!-- 居中 -->
       <van-row justify="center">
         <van-image
@@ -20,14 +18,20 @@
       <van-cell-group inset>
 
         <van-row justify="center">
-          <van-uploader v-model="fileList" :after-read="afterRead" :max-count="1"/>
+          <van-uploader
+              v-model="fileList"
+              :after-read="afterRead"
+              :max-count="1"
+              :max-size="2 * 1024 * 1024"
+              @oversize="overSize"
+          />
         </van-row>
 
         <van-field
-            v-model="registerUser.userAccount"
+            v-model="registerUser.useraccount"
             :rules=Rules
             label="账号"
-            name="userAccount"
+            name="useraccount"
             left-icon="user-o"
             placeholder="请输入账号"
         />
@@ -39,15 +43,15 @@
             left-icon="edit"
             placeholder="请输入用户名"
         />
-          <van-field
-              v-model="registerUser.userPassword"
-              :rules=Rules
-              label="密码"
-              left-icon="lock"
-              name="userPassword"
-              placeholder="请输入密码"
-              type="password"
-          />
+        <van-field
+            v-model="registerUser.password"
+            :rules=Rules
+            label="密码"
+            left-icon="lock"
+            name="password"
+            placeholder="请输入密码"
+            type="password"
+        />
         <van-field
             v-model="registerUser.checkPassword"
             :rules=Rules
@@ -73,8 +77,9 @@
             v-model="registerUser.email"
             :rules="[{ required: true, message: '请填写邮箱' }]"
             label="邮箱"
-            name="userAccount"
+            name="useraccount"
             placeholder="请输入邮箱"
+            autocomplete="email"
         />
         <van-field
             v-model="checkCaptcha"
@@ -111,17 +116,17 @@ import friend from '../../assets/logo.png';
 const router = useRouter();
 const route = useRoute();
 const registerUser: Ref<{
-  userAccount: string,
+  useraccount: string,
   email: string,
   userName: string,
-  userPassword: string,
+  password: string,
   checkPassword: string,
   captcha: string,
   avatarUrl: string
 }> = ref({
-  userAccount: '',
+  useraccount: '',
   userName: '',
-  userPassword: '',
+  password: '',
   checkPassword: '',
   email: '',
   captcha: '',
@@ -129,10 +134,15 @@ const registerUser: Ref<{
 });
 const avatarUrl = ref('');
 const fileList = ref([]);
-const avatar = ref();
+const avatar = ref('');
 const time = ref("获取验证码")
 const isClick = ref(true)
 const checkCaptcha = ref("");
+
+
+const overSize = () => {
+  Toast.fail("单个图片不能超过2M")
+}
 const gainCode = async () => {
   const regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
   let {email} = registerUser.value
@@ -191,26 +201,37 @@ const validatePasswordAndAccount = (value) => {
 
 const Rules = [
   {validator: validatePasswordAndAccount, message: '格式不正确'},
-  { required: true, message: '请填写内容'}
+  {required: true, message: '请填写内容'}
 ];
 
 
 const onSubmit = async () => {
+  let {email} = registerUser.value
   Toast.loading("注册中");
   console.log(checkCaptcha.value)
   console.log(registerUser.value.captcha)
+  if (checkCaptcha.value !== '' && registerUser.value.captcha === '') {
+    const captcha = await myAxios.get("/mail/getCaptcha/" + email)
+    if (captcha.code === 0) {
+      registerUser.value.captcha = captcha.data
+    }
+  }
   if (checkCaptcha.value !== registerUser.value.captcha) {
     Toast.fail("验证码不正确，请重新查看")
   } else {
-    const uploadRes = await myAxios.post("/fileOss/upload", {
-      'file': avatar.value,
-      'userAccount': registerUser.value.userAccount
-    }, {
-      headers: {'Content-Type': 'multipart/form-data'},
-    })
+    if (avatar.value !== '') {
+      const uploadRes = await myAxios.post("/fileOss/upload", {
+        'file': avatar.value,
+        'useraccount': registerUser.value.useraccount
+      }, {
+        headers: {'Content-Type': 'multipart/form-data'},
+      })
 
-    if (uploadRes.code == 0) {
-      registerUser.value.avatarUrl = uploadRes.data
+      if (uploadRes.code == 0) {
+        registerUser.value.avatarUrl = uploadRes.data
+      }
+    } else {
+      registerUser.value.avatarUrl = avatar.value
     }
 
 
@@ -228,7 +249,7 @@ const onSubmit = async () => {
 
 };
 
-const afterRead =  (file) => {
+const afterRead = (file) => {
   // 此时可以自行将文件上传至服务器
   avatar.value = file.file
 };

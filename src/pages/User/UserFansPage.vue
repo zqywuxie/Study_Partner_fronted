@@ -12,7 +12,7 @@
       </template>
       加载中...
     </van-loading>
-    <user-card-list :user-list="userList"/>
+    <user-card-list :user-list="userList" :loading="loading"/>
   </div>
 </template>
 
@@ -25,15 +25,17 @@ const loading = ref(true)
 const userList = ref([])
 onMounted(async () => {
   let res = await myAxios.get("/follow/fans");
-  if (res?.data.code === 0) {
-    res.data.data.forEach((user) => {
+  console.log(res)
+  if (res?.code === 0) {
+    res.data.forEach((user) => {
       if (user.tags) {
         user.tags = JSON.parse(user.tags)
       }
     })
-    userList.value = res.data.data
+    userList.value = res.data
   }
   loading.value = false
+
 })
 </script>
 

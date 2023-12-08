@@ -2,7 +2,7 @@
   <div>
     <van-card
         v-for="team in props.teamList"
-        :thumb="avatar"
+        :thumb="team.avatarUrl"
         :desc="team.description"
         :title="`${team.name}`"
     >
@@ -30,8 +30,8 @@
       </template>
       <template #footer>
 
-        <van-button  v-if="team.hasJoin" size="small" type="primary" @click="toChatRoom(team.id,team.name)">
-         进入群聊
+        <van-button v-if="team.hasJoin" size="small" type="primary" @click="toChatRoom(team.id,team.name)">
+          进入群聊
         </van-button>
 
 
@@ -47,7 +47,7 @@
         <van-button v-if="team.hasJoin&&team.userId!=currentUser?.id" size="small" type="primary"
                     @click="doQuitTeam(team.id)">退出队伍
         </van-button>
-        <van-button  v-if="currentUser?.id==team.userId" size="small" type="danger" @click="doDeleteTeam(team.id)">
+        <van-button v-if="currentUser?.id==team.userId" size="small" type="danger" @click="doDeleteTeam(team.id)">
           解散队伍
         </van-button>
       </template>
@@ -173,8 +173,10 @@ const doDeleteTeam = async (id: number) => {
   });
   if (res?.code === 0) {
     Toast.success('解散队伍成功');
+    refresh()
   } else {
     Toast.fail('解散队伍失败' + (res.description ? `，${res.description}` : ''));
+    refresh()
   }
 }
 const doQuitTeam = async (id: number) => {
@@ -186,6 +188,7 @@ const doQuitTeam = async (id: number) => {
     refresh();
   } else {
     Toast.fail('退出失败' + (res.description ? `，${res.description}` : ''));
+    refresh();
   }
 }
 

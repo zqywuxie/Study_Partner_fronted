@@ -40,8 +40,6 @@
 <script setup lang="ts">
 import {BlogType} from "../models/blog";
 import {useRouter} from "vue-router";
-import {getCurrentUser} from "../service/user";
-import {Toast} from "vant";
 import moment from "moment";
 
 interface BlogCardListProps {

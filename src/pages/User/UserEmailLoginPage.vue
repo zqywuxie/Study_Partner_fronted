@@ -22,7 +22,7 @@
               v-model="email"
               :rules="[{ required: true, message: '请填写邮箱' }]"
               label="邮箱"
-              name="userAccount"
+              name="useraccont"
               placeholder="请输入邮箱"
           />
           <van-field

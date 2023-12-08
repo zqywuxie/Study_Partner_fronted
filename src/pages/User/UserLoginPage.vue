@@ -18,11 +18,11 @@
         <van-divider/>
         <van-cell-group inset>
           <van-field
-              v-model="userAccount"
+              v-model="useraccount"
               left-icon="phone-o"
               :rules="[{ required: true, message: '请填写用户名' }]"
               label="账号"
-              name="userAccount"
+              name="useraccount"
               placeholder="请输入账号"
           />
           <van-field
@@ -30,7 +30,7 @@
               left-icon="lock"
               :rules="[{ required: true, message: '请填写密码' }]"
               label="密码"
-              name="userPassword"
+              name="password"
               placeholder="请输入密码"
               type="password"
           />
@@ -42,10 +42,12 @@
         </div>
         <van-divider/>
 
-        <van-cell title="" to="/user/register" value="还没有账号？注册"></van-cell>
+        <van-cell title="" to="/user/register" value="还没有账号？去注册" style="margin-left: auto"></van-cell>
+
 
       </van-form>
-      <div class="ways" style="margin-top: -5px">
+      <div class=" ways
+          " style="margin-top: -5px">
         <span>其他登录方式</span>
         <van-grid>
           <van-grid-item @click="()=>{Toast.fail('暂不支持QQ登录')}">
@@ -63,6 +65,12 @@
               <van-icon name="envelop-o" size="23" style="margin-bottom: 8px;color: #0a0dd2"/>
             </template>
           </van-grid-item>
+          <van-grid-item @click="openBaidu" text="后台">
+            <template #icon>
+              <van-icon name="manager" size="23" style="margin-bottom: 8px;color: #0a0dd2"/>
+            </template>
+          </van-grid-item>
+
         </van-grid>
       </div>
     </van-row>
@@ -78,15 +86,18 @@ import {useRouter, useRoute} from "vue-router";
 import friend from "../../assets/logo.png"
 import Copyright from "../../components/CopyRight.vue";
 
+const openBaidu = () => {
+  window.open('https://manage.zqywuku.top', '_blank')
+}
 const router = useRouter()
 const route = useRoute()
-const userAccount = ref('');
+const useraccount = ref('');
 const password = ref('');
 
 const onSubmit = async () => {
   const result = await myAxios.post('/user/login', {
-    userAccount: userAccount.value,
-    userPassword: password.value
+    useraccount: useraccount.value,
+    password: password.value
   })
   if (result.code === 0 && result.data) {
     Toast("登录成功")
@@ -99,7 +110,7 @@ const onSubmit = async () => {
   }
 };
 
-const QQLogin = ()=> {
+const QQLogin = () => {
 
 }
 </script>

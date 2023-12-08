@@ -37,20 +37,70 @@
   </van-cell-group>
   <div style="margin: 16px">
     <div v-if="user?.id !== currentUser?.id">
-      <van-button v-if="user?.isFollow" style="width: 80%;margin-left: 40px" plain round type="danger"
-                  @click="followUser">
+      <van-button
+          v-if="user?.isFollow"
+          style="width: 80%; margin-left: 40px"
+          plain round type="danger"
+          @click="followUser"
+      >
         取消关注
       </van-button>
-      <van-button v-else style="width: 80%;margin-left: 40px;margin-top: 10px" plain round type="primary"
-                  @click="followUser">关注
+
+      <van-button
+          v-else-if="!user?.isFollow"
+          style="width: 80%; margin-left: 40px; margin-top: 10px"
+          plain round type="primary"
+          @click="followUser"
+      >
+        关注
       </van-button>
-      <van-button style="width: 80%;margin-left: 40px;margin-top: 10px" round type="primary" @click="toChat">
-        私聊
-      </van-button>
-      <van-button style="width: 80%;margin-left: 40px;margin-top: 10px" plain round type="primary" @click="addFriends">
+
+      <van-button
+          v-else-if="!user?.isFriend"
+          style="width: 80%; margin-left: 40px; margin-top: 10px"
+          plain round type="primary"
+          @click="addFriends"
+      >
         添加好友
       </van-button>
+
+      <van-button
+          v-else-if="user?.isFriend"
+          style="width: 80%; margin-left: 40px; margin-top: 10px"
+          plain round type="primary"
+          @click="addFriends"
+      >
+        删除好友
+      </van-button>
+
+      <van-button
+          style="width: 80%; margin-left: 40px; margin-top: 10px"
+          round type="primary"
+          @click="toChat"
+      >
+        私聊
+      </van-button>
     </div>
+    <div v-if="user?.id !== currentUser?.id">
+      <van-button
+          v-if="!user?.isFriend"
+          style="width: 80%; margin-left: 40px; margin-top: 10px"
+          plain round type="primary"
+          @click="addFriends"
+      >
+        添加好友
+      </van-button>
+
+      <van-button
+          v-else
+          style="width: 80%; margin-left: 40px; margin-top: 10px"
+          @click="toDelete(user)"
+          plain round type="danger"
+      >
+        删除好友
+      </van-button>
+    </div>
+
   </div>
 
 
@@ -91,6 +141,7 @@ const currentUser = ref()
 onMounted(async () => {
   currentUser.value = await getCurrentUser();
   let res = await myAxios.get("/user/search/" + route.query.id);
+  console.log(res)
   if (res?.code === 0) {
     if (res.data.tags) {
       res.data.tags = JSON.parse(res.data.tags)
@@ -102,6 +153,27 @@ onMounted(async () => {
 const clearInput = () => {
   // 清空输入框
   applyMessage.value = '';
+}
+
+const toDelete = (user) => {
+  Dialog.confirm({
+    title: '确定要删除<' + user.username + '>吗？',
+    message:
+        '如果删除，你将失去了一位好友☹️',
+  })
+      .then(async () => {
+        let res = await myAxios.get("/friends/delete/"+user.id);
+        if (res?.code === 0) {
+          Toast.success("删除成功")
+          // setTimeout(() => {
+          //   emits("refresh")
+          // }, 300)
+        } else {
+          Toast.fail("删除失败" + (res.message ? `,${res.message}` : ''))
+        }
+      })
+      .catch(() => {
+      });
 }
 const toAddUserApply = async (id) => {
   const status = await myAxios.post("/friends/add", {

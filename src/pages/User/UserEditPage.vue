@@ -90,9 +90,6 @@ const OnAfterRead = async (file) => {
 const onSubmit = async () => {
 
   const currentUser = await getCurrentUser();
-  if (editUser.value.editKey == 'gender') {
-    editUser.value.editValue = (editUser.value.editValue == '女' ? '1' : '0')
-  }
   if (!currentUser) {
     Toast.fail("用户未登录")
     return

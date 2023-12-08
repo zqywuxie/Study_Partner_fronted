@@ -28,7 +28,7 @@
       </template>
       <template #price>
         <van-icon v-if="user.phone" name="phone-o" style="">{{ ':' + user.phone }}</van-icon>
-        <van-icon else="user.phone" name="phone-o" style="">:这个人很懒，没有设置联系电话</van-icon>
+        <van-icon v-else name="phone-o" style="">:这个人很懒，没有设置联系电话</van-icon>
 
 
         <br/>
@@ -85,11 +85,14 @@ const toDelete = (user) => {
         '如果删除，你将失去了一位好友☹️',
   })
       .then(async () => {
-        let res = await myAxios.post("/friends/delete", {
-          friendId: user.id
-        });
+        let res = await myAxios.get("/friends/delete/" + user.id);
         if (res?.code === 0) {
           Toast.success("删除成功")
+          setTimeout(() => {
+            router.push({
+              path: "/user"
+            })
+          }, 500)
           // setTimeout(() => {
           //   emits("refresh")
           // }, 300)

@@ -1,12 +1,27 @@
 <template>
   <form action="/public">
-    <van-search
-        v-model="searchText"
-        placeholder="请输入要搜索的标签"
-        show-action
-        @cancel="onCancel"
-        @search="onSearch"
+    <!--    <van-search-->
+    <!--        v-model="searchText"-->
+    <!--        placeholder="请输入要搜索的标签"-->
+    <!--        show-action-->
+    <!--        @cancel="onCancel"-->
+    <!--        @search="onSearch"-->
+    <!--    />-->
+    <!-- 添加一个输入框用于自定义标签 -->
+    <van-field
+        v-model="customTag"
+        label="自定义标签"
+        placeholder="请输入自定义标签"
     />
+    <van-button
+        @click="onCustomTagAdd"
+        type="primary"
+        size="small"
+        round
+        style="margin-left: 8px;"
+    >
+      添加标签
+    </van-button>
   </form>
   <van-divider content-position="left">已选标签</van-divider>
   <van-divider v-if="activeIds.length===0" content-position="center">有标签才会显示在主页喔</van-divider>
@@ -23,8 +38,9 @@
       v-model:active-id="activeIds"
       v-model:main-active-index="activeIndex"
       :items="tagsList"
-      @click-item="onClickItem"
+      :max="5"
       @click-nav="onClickNav"
+      @click-item="onClickItem"
   />
   <div style="padding: 15px">
     <van-button block type="primary" @click="doEditTags">修改</van-button>
@@ -55,27 +71,40 @@ const originTagsList = UserTagsList;
 const tagsList = ref(originTagsList);
 const checkSame = ref(0)
 
+const customTag = ref(''); // 用于存储用户输入的自定义标签
+const onCustomTagAdd = () => {
+  if (customTag.value.trim() === '') {
+    Toast.fail('请输入自定义标签');
+    return;
+  }
 
+  // 检查是否已存在该标签
+  if (!activeIds.value.includes(customTag.value)) {
+    // 添加用户输入的标签到 activeIds 列表
+    activeIds.value.push(customTag.value);
+    // 清空输入框
+    customTag.value = '';
+  } else {
+    Toast.fail('该标签已存在');
+  }
+};
 const onClickNav = (item) => {
   //todo 年级性别只能选择一个标签
-  if (item == 0 || item == 1) {
-    let genderChild = UserTagsList.find(tag => tag.text == (item == 1 ? "性别" : "年级")).children.map((user) => user.text);
-    let res = activeIds.value
-    let set1 = new Set(genderChild);
-    let set2 = new Set(res);
-    let resCount = set1.size + set2.size
-    let intersection = new Set([...set1, ...set2]);
-    let checkCount = intersection.size - resCount;
-    if (checkCount < 0) {
-      checkSame.value = -1
-    }
-  }
+  // if (item == 0 || item == 1) {
+  //   const parent = nodes.find((node) => node.id === targetNode.parent.id);
+  //   parent.children.forEach((child) => {
+  //     if (child.id !== targetNode.id) {
+  //       child.disabled = true;
+  //     }
+  //   }
+  // }
 }
 const onClickItem = (item) => {
-  if (checkSame.value < 0) {
-    Toast.fail("该类型标签不能重复选择")
-    return
-  }
+  console.log(item)
+  // if (checkSame.value < 0) {
+  //   Toast.fail("该类型标签不能重复选择")
+  //   return
+  // }
 }
 const onSearch = (val) => {
   //为了不改变原数组这里要深拷贝，否则children还是对象应用
@@ -105,10 +134,9 @@ const onCancel = () => {
 //将原有标签设置进去
 onMounted(() => {
   const currentTags = editTags.value.currentValue;
-  if (typeof currentTags == "string") {
+  // console.log(currentTags)
+  if (currentTags != '') {
     activeIds.value = JSON.parse(currentTags);
-  } else {
-    activeIds.value = currentTags
   }
 })
 

@@ -1,12 +1,27 @@
 <template>
     <form action="/public">
-        <van-search
-                v-model="searchText"
-                show-action
-                placeholder="请输入搜索标签"
-                @search="onSearch"
-                @cancel="onCancel"
-        />
+<!--        <van-search-->
+<!--                v-model="searchText"-->
+<!--                show-action-->
+<!--                placeholder="请输入搜索标签"-->
+<!--                @search="onSearch"-->
+<!--                @cancel="onCancel"-->
+<!--        />-->
+      <!-- 添加一个输入框用于自定义标签 -->
+      <van-field
+          v-model="customTag"
+          label="自定义标签"
+          placeholder="请输入自定义标签"
+      />
+      <van-button
+          @click="onCustomTagAdd"
+          type="primary"
+          size="small"
+          round
+          style="margin-left: auto;"
+      >
+        添加标签
+      </van-button>
     </form>
     <van-divider content-position="left">已选标签</van-divider>
     <div v-if="activeIds.length === 0">请选择标签</div>
@@ -32,6 +47,7 @@
 import {ref} from 'vue';
 import {useRouter} from "vue-router";
 import UserTagsList from "../../constants/UserTagsList";
+import {Toast} from "vant";
 
 const router = useRouter();
 
@@ -44,6 +60,24 @@ let tagList = ref(originTagList);
  *  搜索过滤
  * @param val
  */
+
+const customTag = ref(''); // 用于存储用户输入的自定义标签
+const onCustomTagAdd = () => {
+  if (customTag.value.trim() === '') {
+    Toast.fail('请输入自定义标签');
+    return;
+  }
+
+  // 检查是否已存在该标签
+  if (!activeIds.value.includes(customTag.value)) {
+    // 添加用户输入的标签到 activeIds 列表
+    activeIds.value.push(customTag.value);
+    // 清空输入框
+    customTag.value = '';
+  } else {
+    Toast.fail('该标签已存在');
+  }
+};
 const onSearch = (val) => {
     tagList.value = originTagList.map(parentTag => {
         const tempChildren = [...parentTag.children];
@@ -86,5 +120,8 @@ const doclose = (tag) => {
 </script>
 
 <style scoped>
-
+.flex-container {
+  display: flex;
+  align-items: center;
+}
 </style>

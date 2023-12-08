@@ -9,51 +9,51 @@
     <van-cell-group>
       <van-cell
           v-for="application in resList"
-          :key="application.fromUser.id"
+          :key="application.applyUser.id"
           is-link
           class="custom-cell"
-          @click="goToFriendDetail(application.fromUser.id)"
+          @click="goToFriendDetail(application.applyUser.id)"
       >
         <template #icon>
-          <img :src="application.fromUser.avatarUrl" class="friend-avatar"/>
+          <img :src="application.applyUser.avatarUrl" class="friend-avatar"/>
         </template>
 
         <template #title>
         <span>
-          {{ application.fromUser.username }}
-          <span class="request-time">{{ formatRequestTime(application.fromUser.createTime) }}</span>
+          {{ application.applyUser.username }}
+          <span class="request-time">{{ formatRequestTime(application.createTime) }}</span>
         </span>
         </template>
 
         <template #label>
-          <span v-if="application.friendsRecordVO.status === 0">申请添加你为好友</span>
-          <span v-else-if="application.friendsRecordVO.status === 1">申请已同意</span>
-          <span v-else-if="application.friendsRecordVO.status === 2">申请已过期</span>
-          <span v-else-if="application.friendsRecordVO.status === 3">申请已拒绝</span>
+          <span v-if="application.status === 0">{{ application.remark }}</span>
+          <span v-else-if="application.status === 1">申请已同意</span>
+          <span v-else-if="application.status === 2">申请已拒绝</span>
+          <span v-else-if="application.status === 3">申请已过期</span>
         </template>
 
         <template #right-icon>
-          <div v-if="application.friendsRecordVO.status === 0 && !isRecordExpired(application)">
-            <template v-if="!application.isRequestHandled">
+          <div v-if="application.status === 0 && !isRecordExpired(application)">
+            <template v-if="application.status !== 4">
               <van-button
                   type="primary"
                   size="small"
-                  @click.stop="acceptFriendRequest(application.fromUser.id,application.fromUser.username)"
+                  @click.stop="acceptFriendRequest(application.applyUser.id,application.applyUser.username)"
               >
                 同意
               </van-button>
               <van-button
                   type="danger"
                   size="small"
-                  @click.stop="rejectFriendRequest(application.fromUser.id,application.fromUser.username)"
+                  @click.stop="rejectFriendRequest(application.applyUser.id,application.applyUser.username)"
               >
                 拒绝
               </van-button>
             </template>
             <template v-else>
-              <span v-if="application.friendsRecordVO.status === 1">已同意该请求</span>
-              <span v-else-if="application.friendsRecordVO.status === 2">该请求已过期</span>
-              <span v-else-if="application.friendsRecordVO.status === 3">已拒绝该请求</span>
+              <span v-if="application.status === 1">已同意该请求</span>
+              <span v-else-if="application.status === 2">已拒绝该请求</span>
+              <span v-else-if="application.status === 3">请求已过期</span>
             </template>
           </div>
         </template>
@@ -79,6 +79,7 @@ const isRecordExpired = (record) => {
 };
 const resList = ref([])
 const router = useRouter();
+const status = ref(0)
 const goToFriendDetail = (id) => {
   const showUserDetail = (id: any) => {
     router.push({
@@ -95,14 +96,28 @@ const acceptFriendRequest = async (id, name) => {
   const request = await MyAxios.post("/friends/agree/" + id)
   if (request.code == 0) {
     Toast.success(`已同意${name}的好友申请`)
+    resList.value.forEach((item) => {
+      if (item.applyUser.id === id) {
+        item.status = 1
+      }
+    })
+  } else {
+    Toast.fail("同意失败,请联系管理员解决")
   }
 };
 
 const rejectFriendRequest = async (id, name) => {
   // TODO: Handle rejecting friend request
   const request = await MyAxios.post("/friends/canceledApply/" + id)
-  if (request) {
+  if (request.code === 0) {
     Toast.success(`已拒绝${name}的好友申请`)
+    resList.value.forEach((item) => {
+      if (item.applyUser.id === id) {
+        item.status = 2
+      }
+    })
+  } else {
+    Toast.fail("拒绝失败，请联系管理员")
   }
 };
 
@@ -114,8 +129,12 @@ const formatRequestTime = (requestTime) => {
 let route = useRoute()
 onMounted(async () => {
   await MyAxios.get("/message/read/" + MessageTypeEnum.FRIEND_APPLICATION)
-  console.log(JSON.parse(route.query.applicationList))
-  resList.value = JSON.parse(route.query.applicationList)
+  // /friends/getRecords
+  const res = await MyAxios.get("/friends/getRecords")
+  console.log(res.data)
+  resList.value = res.data
+  // console.log(JSON.parse(route.query.applicationList))
+  // resList.value = JSON.parse(route.query.applicationList)
   loading.value = false
 })
 

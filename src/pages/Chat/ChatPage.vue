@@ -2,8 +2,12 @@
   <van-sticky>
     <van-nav-bar
         :title="title"
-        @click-right="showUserDetail(userId)"
+        @click-right="showUserDetail(stats.chatType)"
+        @click-left="()=>{router.go(-1)}"
     >
+      <template #left>
+        <van-icon  name="arrow-left" color="#39a9ed"/>
+      </template>
       <template #right>
         <van-icon class-prefix="my-icon" name="qita" color="#39a9ed"/>
       </template>
@@ -113,13 +117,25 @@ const startHeartbeat = () => {
 const userId = route.query.id;
 
 // 显示用户信息
-const showUserDetail = (id) => {
-  router.push({
-    path: "/user/detail",
-    query: {
-      id: id
-    }
-  })
+const showUserDetail = (chatType: number) => {
+  if (stats.value.chatEnum.PRIVATE_CHAT == chatType) {
+    router.push({
+      path: "/user/detail",
+      query: {
+        id: userId
+      }
+    })
+  } else if (stats.value.chatEnum.TEAM_CHAT == chatType) {
+    // todo 查看群成员
+  } else {
+
+  }
+  // router.push({
+  //   path: "/user/detail",
+  //   query: {
+  //     id: id
+  //   }
+  // })
 }
 
 const stopHeartbeat = () => {
@@ -130,6 +146,7 @@ const stopHeartbeat = () => {
 const chatRoom = ref(null)
 const DEFAULT_TITLE = "聊天"
 const title = ref(DEFAULT_TITLE)
+
 onMounted(async () => {
   let {id, username, userType, teamId, teamName, teamType} = route.query
   stats.value.chatUser.id = Number.parseInt(id)
@@ -155,7 +172,6 @@ onMounted(async () => {
           toId: stats.value.chatUser.id,
         })
     privateMessage.data.forEach(chat => {
-      console.log(chat)
       if (chat.isMy === true) {
         createContent(null, chat.fromUser, chat.text, true, chat.createTime)
       } else {
@@ -179,7 +195,6 @@ onMounted(async () => {
           teamId: stats.value.team.teamId
         })
     teamMessage.data.forEach(message => {
-      console.log(message)
       if (message.isMy === true) {
         createContent(null, message.fromUser, message.text)
       } else {
@@ -188,6 +203,7 @@ onMounted(async () => {
     })
   }
   init()
+  // nextTick用于下次Dom更新循环结束之后执行延迟回调，在修改数据之后使用nextTick.则可以在回调中获取更新后的DOM
   await nextTick()
   const lastElement = chatRoom.value.lastElementChild
   lastElement.scrollIntoView()
@@ -198,10 +214,11 @@ const init = () => {
   if (typeof (WebSocket) == "undefined") {
     Toast.fail("您的浏览器不支持WebSocket")
   } else {
-    // todo 修改为后端启动地址和端口
+    // todo 修改为生产环境和上线环境后端启动地址和端口
+    // let socketUrl = `wss://www.zqywuku.top/api/websocket/${uid}/${stats.value.team.teamId}`
     let socketUrl = `ws://localhost:8081/api/websocket/${uid}/${stats.value.team.teamId}`
     console.log(socketUrl)
-    // let socketUrl = `ws://pt.kongshier.top:8105/api/websocket/${uid}/${stats.value.team.teamId}`
+
     if (socket != null) {
       socket.close();
       socket = null;
@@ -332,7 +349,7 @@ const createContent = (remoteUser, nowUser, text, isAdmin, createTime) => {
     html = `
     <div class="message self">
     <div class="myInfo info">
-        <span class="username">12</span>
+        <span class="username">${nowUser.username}</span>
       <img :alt=${nowUser.username} class="avatar" onclick="showUser(${nowUser.id})" src=${nowUser.avatarUrl}>
 
     </div>
@@ -353,7 +370,7 @@ const createContent = (remoteUser, nowUser, text, isAdmin, createTime) => {
   }
   stats.value.content += html;
 }
-window.showUser = showUser
+// window.showUser = showUser
 </script>
 <style>
 .message-time {
@@ -434,6 +451,7 @@ window.showUser = showUser
   background-color: #0084ff;
   color: #fff;
 }
+
 .emojibtn {
   width: 30px; /* 调整按钮宽度 */
   height: 30px; /* 调整按钮高度 */

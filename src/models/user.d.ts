@@ -4,14 +4,15 @@
 export type UserType = {
     id: number;
     username: string;
-    userAccount: string;
+    useraccount: string;
     avatarUrl?: string;
     profile?: string;
-    gender:number;
+    gender: number;
     phone: string;
     email: string;
-    userStatus: number;
-    userRole: number;
+    status: number;
+    // userRole: number;
     tags: string;
+    deptId: number;
     createTime: Date;
 };

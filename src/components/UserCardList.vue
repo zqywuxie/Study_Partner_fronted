@@ -23,7 +23,7 @@
     <van-cell :value="clickUser.city" center title="伙伴城市:"/>
 
     <van-cell :value="clickUser.profile" center title="伙伴简介:"/>
-    <van-cell :value="clickUser.gender == 0?'男':'女'" center title="伙伴性别:"/>
+    <van-cell :value="clickUser.gender == 1?'男':'女'" center title="伙伴性别:"/>
     <van-cell :value="popupText" center/>
   </van-popup>
 </template>
@@ -71,5 +71,6 @@ const show = ref(false);
 </script>
 
 <style scoped>
+/* 在你的样式表中添加以下样式 */
 
 </style>

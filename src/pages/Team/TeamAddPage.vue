@@ -48,21 +48,20 @@
         </van-field>
         <van-field name="radio" label="队伍状态" left-icon="clock-o">
           <template #input>
-            <van-radio-group v-model="addTeamData.status" direction="horizontal" >
+            <van-radio-group v-model="addTeamData.status" direction="horizontal">
               <van-radio name="0">公开</van-radio>
-              <van-radio name="1">私有</van-radio>
-              <van-radio name="2">加密</van-radio>
+              <van-radio name="1">加密</van-radio>
             </van-radio-group>
           </template>
         </van-field>
         <van-field
-            v-if="Number(addTeamData.status) === 2"
+            v-if="Number(addTeamData.status) === 1"
             v-model="addTeamData.password"
             type="password"
             name="password"
             label="密码"
             placeholder="请输入队伍密码"
-            :rules="[{ required: true, message: '请填写密码' }]"
+            :rules="Rules"
         />
       </van-cell-group>
       <div style="margin: 16px;">
@@ -81,6 +80,17 @@ import {ref} from "vue";
 import myAxios from "../../plugins/MyAxios";
 import {Toast} from "vant";
 
+
+const validatePassword = (value) => {
+
+  if (value.length < 6 || value.length > 20) {
+    return '长度必须在6到20个字符之间';
+  }
+};
+const Rules = [
+  {required: true, message: '请填写内容'},
+  {validator: validatePassword},
+];
 const fileList = ref([]);
 const afterRead = (file) => {
   // 此时可以自行将文件上传至服务器
@@ -116,6 +126,7 @@ const onSubmit = async () => {
     headers: {'Content-Type': 'multipart/form-data'},
   })
 
+  console.log(uploadRes)
   if (uploadRes.code == 0) {
     addTeamData.value.avatarUrl = uploadRes.data
   }

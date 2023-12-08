@@ -53,6 +53,7 @@ const onLoad = () => {
 }
 
 async function listBlogs(currentPage) {
+  // console.log(currentPage)
   listLoading.value = true
   const res = await myAxios.get("/blog/list/my/blog?currentPage=" + currentPage)
   console.log(res)

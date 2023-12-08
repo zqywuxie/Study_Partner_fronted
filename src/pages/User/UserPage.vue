@@ -22,7 +22,7 @@
 
 
       </van-space>
-      <van-cell :value="user.profile" center is-link title="个人简介"/>
+      <van-cell :value="user.profile" @click.stop="router.push('/user/update')" center is-link title="个人简介"/>
       <van-cell center style="margin-top: 15px">
         <template #title>
           <span style="margin-left: 20px">我的标签</span>
@@ -165,6 +165,7 @@ onMounted(async () => {
 const fetchFollowersCount = async () => {
   const fans = await myAxios.get("/follow/fansCount");
   const myFollow = await myAxios.get("/follow/myCount");
+  console.log(myFollow)
   user.value.fans = fans.data;
   user.value.follow = myFollow.data;
   // You may want to perform additional logic or error handling here

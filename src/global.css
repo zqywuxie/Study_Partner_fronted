@@ -4,6 +4,27 @@
     width: 50px;
     right: 12px;
     height: 50px;
+    bottom: 115px;
+    z-index: 2;
+}
+
+.search_button {
+    border-radius: 50%;
+    position: fixed;
+    width: 50px;
+    right: 12px;
+    height: 50px;
+    /*bottom: 50px;*/
+    bottom: 170px;
+    z-index: 2;
+}
+.ellipsis_button{
+    border-radius: 50%;
+    position: fixed;
+    width: 50px;
+    right: 12px;
+    height: 50px;
+    /*bottom: 50px;*/
     bottom: 60px;
     z-index: 2;
 }
@@ -15,6 +36,9 @@ body {
 
 }
 
+.van-button {
+    border-radius: 20px; /* 调整圆滑度，根据需要进行调整 */
+}
 
 :root {
     --van-cell-group-background-color: ;
