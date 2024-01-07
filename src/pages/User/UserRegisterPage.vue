@@ -236,12 +236,14 @@ const onSubmit = async () => {
 
 
     const res = await myAxios.post("/user/register", registerUser.value)
-
+    console.log(res)
     if (res.code == 0) {
       Toast.success("注册成功，等待跳转")
       setTimeout(() => {
         router.push("/user/login")
       }, 500)
+    } else {
+      Toast.fail(res.description)
     }
 
   }
